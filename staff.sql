@@ -1,11 +1,11 @@
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET time_zone = "+00:00";
 
-CREATE DATABASE IF NOT EXISTS `staff` DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
-USE `employee`;
+CREATE DATABASE IF NOT EXISTS `Staff` DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
+USE `Staff`;
 
-DROP TABLE IF EXISTS `emoloyee`;
-CREATE TABLE IF NOT EXISTS `employee` (
+DROP TABLE IF EXISTS `Staff`;
+CREATE TABLE IF NOT EXISTS `Staff` (
     `Staff_ID` int(5) PRIMARY KEY,
     `Staff_FName` varchar(50) NOT NULL,
     `Staff_LName` varchar(50) NOT NULL,
