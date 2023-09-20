@@ -10,7 +10,7 @@ CREATE TABLE IF NOT EXISTS `Staff_Skill` (
     `Skill_Name` varchar(20) FOREIGN KEY,
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
-INSERT INTO `Staff_Skill` (`employeeID`,`skill`) VALUES
+INSERT INTO `Staff_Skill` (`Staff_ID`,`Skill_Name`) VALUES
 (10001, `testSkill`);
 (10001, `testSkill3`);
 (10002, `testSkill2`);
