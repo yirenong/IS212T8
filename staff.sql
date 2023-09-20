@@ -20,4 +20,4 @@ INSERT INTO `employee` (`Staff_ID`,`Staff_FName`,`Staff_LName`,`Dept`,`Country`,
 (10001, `Jeremy`, `Wong`, ``,`Vietnam`,`jeremywong@gmail.com`,`manager`);
 (10002, `Charlie`, `Gipson`, ``, `Malaysia`,`chalieG@gmail.com`,`admin`);
 (10003, `Cindy`, `Chan`, ``,`Hong Kong`,`cindychan@gmail.com`,`users`);
-ALTER TABLE employee
+ALTER TABLE Staff
