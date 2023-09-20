@@ -12,8 +12,7 @@ CREATE TABLE IF NOT EXISTS `Staff` (
     `Dept` varchar(50) NOT NULL,
     `Country` varchar(50) NOT NULL,
     `Email` varchar(50) NOT NULL,
-    `Access_Rights` FOREIGN KEY,
-    PRIMARY KEY (`EmployeeID`)
+    `Access_Rights` FOREIGN KEY
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
 INSERT INTO `employee` (`Staff_ID`,`Staff_FName`,`Staff_LName`,`Dept`,`Country`,`Email`,`Access_rights`)VALUES 
