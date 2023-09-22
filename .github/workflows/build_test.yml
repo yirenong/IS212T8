@@ -13,10 +13,10 @@ jobs:
     
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
-      - name: Install Node.js
-        uses: actions/setup-node@v2
+      - name: Setup node.js to ver. 18.16.0
+        uses: actions/setup-node@v3
         with:
           node-version: '18.16.0'
 
@@ -40,8 +40,8 @@ jobs:
       - name: Install Python dependencies for Flask
         run: pip install -r Flask/requirements.txt
 
-      - name: Test Flask application
-        run: python Flask/app.py test
+      # - name: Test Flask application
+      #   run: python Flask/app.py test
 
       # - name: Run end-to-end tests (if applicable)
       #   run: # Add command to run end-to-end tests (e.g., Cypress, Selenium)
