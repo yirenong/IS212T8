@@ -1,0 +1,39 @@
+name: Build and Test
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    env:
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Install Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '18.16.0'
+
+      - name: Install dependencies for Vue.js
+        run: npm install --prefix test-vue-router
+
+      - name: Build and test Vue.js
+        run: npm run build --prefix test-vue-router
+
+      - name: Install Python and dependencies for Flask
+        run: |
+          python -m venv venv
+          source venv/bin/activate
+          pip install -r Flask/requirements.txt
+
+      - name: Test Flask application
+        run: python Flask/app.py test
+
+      - name: Run end-to-end tests (if applicable)
+        run: # Add command to run end-to-end tests (e.g., Cypress, Selenium)
