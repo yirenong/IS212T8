@@ -25,6 +25,7 @@ CREATE TABLE IF NOT EXISTS `Staff` (
     `Country` varchar(50) NOT NULL,
     `Email` varchar(50) NOT NULL,
     `Access_Rights` int(5),
+    FOREIGN KEY (`Access_Rights_ID`) REFERENCES `Access_Rights`(`Access_Rights_ID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
 DROP TABLE IF EXISTS `Role_Skill`;
