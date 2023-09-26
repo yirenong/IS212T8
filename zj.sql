@@ -43,6 +43,12 @@ CREATE TABLE IF NOT EXISTS `Staff_Skill` (
     FOREIGN KEY (`Skill_Name`) REFERENCES `Role_Skill`(`Skill_Name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
+-- Insert statement for Staff table
+INSERT INTO `Staff` (`Staff_ID`, `Staff_FName`, `Staff_LName`, `Dept`, `Country`, `Email`, `Access_Rights`) VALUES 
+(10001, 'John', 'Doe', 'IT', 'USA', 'john.doe@example.com', 1),
+(10002, 'Jane', 'Smith', 'HR', 'Canada', 'jane.smith@example.com', 2),
+(10003, 'Michael', 'Johnson', 'Finance', 'UK', 'michael.j@example.com', 3);
+
 INSERT INTO `Staff_Skill` (`Staff_ID`,`Skill_Name`) VALUES
 (10001, 'testSkill'),
 (10001, 'testSkill3'),
