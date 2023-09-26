@@ -26,6 +26,12 @@ CREATE TABLE IF NOT EXISTS `Staff` (
     FOREIGN KEY (`Access_Rights`) REFERENCES `Access_Rights`(`Access_Rights_ID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
+INSERT INTO `Staff` (`Staff_ID`, `Staff_FName`, `Staff_LName`, `Dept`, `Country`, `Email`, `Access_Rights`) VALUES 
+(10001, 'John', 'Doe', 'IT', 'USA', 'john.doe@example.com', 1),
+(10002, 'Jane', 'Smith', 'HR', 'Canada', 'jane.smith@example.com', 2),
+(10003, 'Michael', 'Johnson', 'Finance', 'UK', 'michael.j@example.com', 3);
+
+
 DROP TABLE IF EXISTS `Role_Skill`;
 CREATE TABLE IF NOT EXISTS `Role_Skill` (
     `Role_Name` varchar(20) NOT NULL,
@@ -43,11 +49,14 @@ CREATE TABLE IF NOT EXISTS `Staff_Skill` (
     FOREIGN KEY (`Skill_Name`) REFERENCES `Role_Skill`(`Skill_Name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
--- Insert statement for Staff table
-INSERT INTO `Staff` (`Staff_ID`, `Staff_FName`, `Staff_LName`, `Dept`, `Country`, `Email`, `Access_Rights`) VALUES 
-(10001, 'John', 'Doe', 'IT', 'USA', 'john.doe@example.com', 1),
-(10002, 'Jane', 'Smith', 'HR', 'Canada', 'jane.smith@example.com', 2),
-(10003, 'Michael', 'Johnson', 'Finance', 'UK', 'michael.j@example.com', 3);
+INSERT INTO `Role_Skill` (`Role_Name`,`Skill_Name`) VALUES
+("Business Analyst", 'testSkill'),
+("Business Analyst", 'testSkill3'),
+("Business Analyst", 'testSkill2'),
+("Accounting A1", 'testSkill4'),
+("Accounting A1", 'testSkill1'),
+("Assistant", 'testSkill2'),
+("Assistant", 'testSkill3');
 
 INSERT INTO `Staff_Skill` (`Staff_ID`,`Skill_Name`) VALUES
 (10001, 'testSkill'),
@@ -57,12 +66,3 @@ INSERT INTO `Staff_Skill` (`Staff_ID`,`Skill_Name`) VALUES
 (10003, 'testSkill1'),
 (10003, 'testSkill2'),
 (10003, 'testSkill3');
-
-INSERT INTO `Role_Skill` (`Role_Name`,`Skill_Name`) VALUES
-("Business Analyst", 'testSkill'),
-("Business Analyst", 'testSkill3'),
-("Business Analyst", 'testSkill2'),
-("Accounting A1", 'testSkill4'),
-("Accounting A1", 'testSkill1'),
-("Assistant", 'testSkill2'),
-("Assistant", 'testSkill3');
