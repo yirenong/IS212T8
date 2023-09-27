@@ -10,6 +10,7 @@ db = SQLAlchemy(app)
 cors = CORS(app, resources={r"/api/*": {"origins": "http://localhost:8080"}})
 CORS(app, resources={r"/login": {"origins": "http://localhost:8080"}})
 
+#Class for joblisting and retrieve it from MYSQL
 class JobListing(db.Model):
     __tablename__ = 'joblistings'
     id = db.Column(db.Integer, primary_key=True)
@@ -21,6 +22,7 @@ class JobListing(db.Model):
     salary = db.Column(db.Numeric(10, 2))
     contact_email = db.Column(db.String(255))
 
+#getting from the class above and send it to vue
 @app.route('/api/job-listings', methods=['GET'])
 def get_job_listings():
     job_listings_data = JobListing.query.all()

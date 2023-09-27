@@ -17,7 +17,7 @@
 
 <script>
 import axios from 'axios';
-
+// logic
 export default {
   data() {
     return {
