@@ -21,16 +21,17 @@ CREATE TABLE IF NOT EXISTS `Staff` (
     `Staff_FName` varchar(50) NOT NULL,
     `Staff_LName` varchar(50) NOT NULL,
     `Email` varchar(128) NOT NULL,
+    `Password` varchar(128) NOT NULL,
     `Dept` varchar(50) NOT NULL,
     `Country` varchar(50) NOT NULL,
     `Access_Level` varchar(50) NOT NULL,
     FOREIGN KEY (`Access_Level`) REFERENCES `Access_Rights`(`Access_Level`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
-INSERT INTO `Staff` (`Staff_ID`, `Staff_FName`, `Staff_LName`, `Dept`, `Country`, `Email`, `Access_Level`) VALUES 
-(10001, 'John', 'Doe', 'IT', 'USA', 'john.doe@example.com', 'Basic'),
-(10002, 'Jane', 'Smith', 'HR', 'Canada', 'jane.smith@example.com', 'Basic'),
-(10003, 'Michael', 'Johnson', 'Finance', 'UK', 'michael.j@example.com', 'Manager');
+INSERT INTO `Staff` (`Staff_ID`, `Staff_FName`, `Staff_LName`, `Dept`, `Country`, `Email`, `Access_Level`, `Password`) VALUES 
+(10001, 'John', 'Doe', 'IT', 'USA', 'john.doe@example.com', 'Basic', 'password'),
+(10002, 'Jane', 'Smith', 'HR', 'Canada', 'jane.smith@example.com', 'Basic', 'password'),
+(10003, 'Michael', 'Johnson', 'Finance', 'UK', 'michael.j@example.com', 'Manager', 'password');
 
 -- Create Skills Table
 DROP TABLE IF EXISTS `Skills`;
