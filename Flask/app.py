@@ -10,30 +10,32 @@ db = SQLAlchemy(app)
 cors = CORS(app, resources={r"/api/*": {"origins": "http://localhost:8080"}})
 CORS(app, resources={r"/login": {"origins": "http://localhost:8080"}})
 
+class JobListing(db.Model):
+    __tablename__ = 'joblistings'
+    id = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(255), nullable=False)
+    company = db.Column(db.String(255))
+    location = db.Column(db.String(255))
+    description = db.Column(db.Text)
+    posted_date = db.Column(db.Date)
+    salary = db.Column(db.Numeric(10, 2))
+    contact_email = db.Column(db.String(255))
+
 @app.route('/api/job-listings', methods=['GET'])
 def get_job_listings():
-    # Replace this with your database query logic
-    job_listings = [
-        {'title': 'Job 1', 'description': 'Description 1'},
-        {'title': 'Job 2', 'description': 'Description 2'},
-        # Add more job listings as needed
-    ]
+    job_listings_data = JobListing.query.all()
+    job_listings = [{
+        'id': listing.id,
+        'title': listing.title,
+        'company': listing.company,
+        'location': listing.location,
+        'description': listing.description,
+        'posted_date': listing.posted_date.strftime('%Y-%m-%d'),
+        'salary': float(listing.salary) if listing.salary is not None else None,
+        'contact_email': listing.contact_email,
+    } for listing in job_listings_data]
+
     return jsonify(job_listings)
-
-# Hardcoded username and password (for demonstration purposes)
-# valid_username = 'user'
-# valid_password = 'password'
-
-# @app.route('/login', methods=['POST'])
-# def login():
-#     data = request.get_json()
-#     username = data.get('username')
-#     password = data.get('password')
-
-#     if username == valid_username and password == valid_password:
-#         return jsonify({"message": "Login successful"})
-#     else:
-#         return jsonify({"message": "Login failed"}), 401
 
 class User(db.Model):
     __tablename__ = 'users'

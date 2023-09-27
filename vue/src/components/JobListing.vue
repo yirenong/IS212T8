@@ -5,6 +5,11 @@
       <li v-for="(job, index) in jobListings" :key="index">
         <h3>{{ job.title }}</h3>
         <p>{{ job.description }}</p>
+        <p>{{ job.company }}</p>
+        <p>{{ job.location }}</p>
+        <p>{{ job.posted_date }}</p>
+        <p>${{ job.salary }}</p>
+        <p>{{ job.contact_email }}</p>
       </li>
     </ul>
   </div>
