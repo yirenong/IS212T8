@@ -6,12 +6,12 @@ CREATE DATABASE IF NOT EXISTS `IS212` DEFAULT CHARACTER SET utf8 COLLATE utf8_ge
 USE `IS212`;
 
 -- Create Access Rights Table
-DROP TABLE IF EXISTS `Access_Rights`;
-CREATE TABLE IF NOT EXISTS `Access_Rights` (
-    `Access_Level` varchar(50) PRIMARY KEY NOT NULL
+DROP TABLE IF EXISTS `Access`;
+CREATE TABLE IF NOT EXISTS `Access` (
+    `Access_Rights` varchar(50) PRIMARY KEY NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
-INSERT INTO `Access_Rights` (`Access_Level`)
+INSERT INTO `Access` (`Access_Rights`)
 VALUES ('Basic'), ('Manager');
 
 -- Create Staff Table
@@ -24,11 +24,11 @@ CREATE TABLE IF NOT EXISTS `Staff` (
     `Password` varchar(128) NOT NULL,
     `Dept` varchar(50) NOT NULL,
     `Country` varchar(50) NOT NULL,
-    `Access_Level` varchar(50) NOT NULL,
-    FOREIGN KEY (`Access_Level`) REFERENCES `Access_Rights`(`Access_Level`)
+    `Access_Rights` varchar(50) NOT NULL,
+    FOREIGN KEY (`Access_Rights`) REFERENCES `Access`(`Access_Rights`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
-INSERT INTO `Staff` (`Staff_ID`, `Staff_FName`, `Staff_LName`, `Dept`, `Country`, `Email`, `Access_Level`, `Password`) VALUES 
+INSERT INTO `Staff` (`Staff_ID`, `Staff_FName`, `Staff_LName`, `Dept`, `Country`, `Email`, `Access_Rights`, `Password`) VALUES 
 (10001, 'John', 'Doe', 'IT', 'USA', 'john.doe@example.com', 'Basic', 'password'),
 (10002, 'Jane', 'Smith', 'HR', 'Canada', 'jane.smith@example.com', 'Basic', 'password'),
 (10003, 'Michael', 'Johnson', 'Finance', 'UK', 'michael.j@example.com', 'Manager', 'password');
@@ -37,23 +37,41 @@ INSERT INTO `Staff` (`Staff_ID`, `Staff_FName`, `Staff_LName`, `Dept`, `Country`
 DROP TABLE IF EXISTS `Skills`;
 CREATE TABLE IF NOT EXISTS `Skills` (
     `Skill_ID` int(5) PRIMARY KEY AUTO_INCREMENT,
-    `Skill` varchar(64) NOT NULL
+    `Skill_Name` varchar(64) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
 -- Insert Skills
-INSERT INTO `Skills` (`Skill`)
+INSERT INTO `Skills` (`Skill_Name`)
 VALUES ('Java'), ('Python'), ('Database Management');
+
+DROP TABLE IF EXISTS `Staff_Skill`;
+CREATE TABLE IF NOT EXISTS `Staff_Skill` (
+    `Staff_ID` int(5) NOT NULL,
+    `Skill_ID` int(5) NOT NULL,
+    `Skill_Name` varchar(64) NOT NULL,
+    PRIMARY KEY (`Staff_ID`, `Skill_ID`),
+    FOREIGN KEY (`Staff_ID`) REFERENCES `Staff`(`Staff_ID`),
+    FOREIGN KEY (`Skill_ID`) REFERENCES `Skills`(`Skill_ID`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
+
+INSERT INTO `Staff_Skill` (`Staff_ID`, `Skill_ID`, `Skill_Name`)
+VALUES (10001, 1, 'Java'),
+       (10001, 2, 'Python'),
+       (10002, 3, 'Database Management'),
+       (10003, 1, 'Java'),
+       (10003, 2, 'Python'),
+       (10003, 3, 'Database Management');
 
 -- Create Role Table
 DROP TABLE IF EXISTS `Role`;
 CREATE TABLE IF NOT EXISTS `Role` (
     `Role_ID` int(5) PRIMARY KEY NOT NULL,
-    `Title` varchar(64) NOT NULL,
+    `Role_Name` varchar(64) NOT NULL,
     `Description` varchar(500) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
 -- Insert Role
-INSERT INTO `Role` (`Role_ID`, `Title`, `Description`)
+INSERT INTO `Role` (`Role_ID`, `Role_Name`, `Description`)
 VALUES (1, 'Software Engineer', 'Develops software applications'),
        (2, 'Database Administrator', 'Manages and maintains databases'),
        (3, 'Project Manager', 'Oversees project development');
@@ -64,7 +82,7 @@ DROP TABLE IF EXISTS `Role_Skill`;
 CREATE TABLE IF NOT EXISTS `Role_Skill` (
     `Role_ID` int(5) NOT NULL,
     `Skill_ID` int(5) NOT NULL,
-    `Title` varchar(64) NOT NULL,
+    `Role_Name` varchar(64) NOT NULL,
     `Description` varchar(500) NOT NULL,
     `Opening` int(5) NOT NULL,
     PRIMARY KEY (`Role_ID`, `Skill_ID`),
@@ -73,7 +91,7 @@ CREATE TABLE IF NOT EXISTS `Role_Skill` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
 -- Insert Role_Skill
-INSERT INTO `Role_Skill` (`Role_ID`, `Skill_ID`, `Title`, `Description`, `Opening`)
+INSERT INTO `Role_Skill` (`Role_ID`, `Skill_ID`, `Role_Name`, `Description`, `Opening`)
 VALUES (1, 1, 'Java Developer', 'Develops software using Java', 5),
        (1, 2, 'Python Developer', 'Develops software using Python', 3),
        (2, 3, 'Database Administrator', 'Manages and maintains databases', 2),
