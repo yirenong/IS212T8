@@ -3,10 +3,18 @@
     <h2>Job Listings</h2>
     <ul>
       <li v-for="(job, index) in jobListings" :key="index">
-        <h3>{{ job.Listing_ID  }}</h3>
-        <p>{{ job.Role_ID  }}</p>
-        <p>{{ job.Opening }}</p>
-        <p>{{ job.Date_posted }}</p>
+        <!-- <h3>{{ job.Listing_ID  }}</h3> -->
+        <p>Job Role: {{ job.Role.Role_Name }}</p>
+        <p>Job Description: {{ job.Role.Description }}</p>
+        <p>Number of Opening: {{ job.Opening }}</p>
+        <p>Date:{{ job.Date_posted }}</p>
+        <p>Skills:
+          <ul>
+            <li v-for="(skill, skillIndex) in job.Role.Skills" :key="skillIndex">
+              {{ skill }}
+            </li>
+          </ul>
+        </p>
       </li>
     </ul>
   </div>
@@ -22,7 +30,7 @@ export default {
     };
   },
   created() {
-    axios.get('http://localhost:5000/api/job-listings')
+    axios.get('http://localhost:5000/api/job_list')
       .then(response => {
         this.jobListings = response.data;
         console.log('Job Listings:', this.jobListings);
