@@ -4,7 +4,7 @@ from flask_cors import CORS
 from sqlalchemy.orm import relationship
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root:@localhost:3308/is212'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root:@localhost/is212'
 db = SQLAlchemy(app)
 
 # Configure CORS to allow requests from your Vue.js frontend
@@ -92,7 +92,7 @@ class Staff(db.Model):
     Password = db.Column(db.String(128), nullable=False)
     Dept = db.Column(db.String(50), nullable=False)
     Country = db.Column(db.String(50), nullable=False)
-    Access_Level = db.Column(db.String(50), nullable=False)
+    Access_Rights = db.Column(db.String(50), nullable=False)
 
 
 @app.route('/login', methods=['POST'])
