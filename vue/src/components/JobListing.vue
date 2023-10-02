@@ -3,13 +3,10 @@
     <h2>Job Listings</h2>
     <ul>
       <li v-for="(job, index) in jobListings" :key="index">
-        <h3>{{ job.title }}</h3>
-        <p>{{ job.description }}</p>
-        <p>{{ job.company }}</p>
-        <p>{{ job.location }}</p>
-        <p>{{ job.posted_date }}</p>
-        <p>${{ job.salary }}</p>
-        <p>{{ job.contact_email }}</p>
+        <h3>{{ job.Listing_ID  }}</h3>
+        <p>{{ job.Role_ID  }}</p>
+        <p>{{ job.Opening }}</p>
+        <p>{{ job.Date_posted }}</p>
       </li>
     </ul>
   </div>
@@ -17,7 +14,7 @@
 
 <script>
 import axios from 'axios';
-// logic
+
 export default {
   data() {
     return {
@@ -35,5 +32,6 @@ export default {
       });
   },
 };
-
 </script>
+
+

@@ -12,38 +12,36 @@ CORS(app, resources={r"/login": {"origins": "http://localhost:8080"}})
 
 #Class for joblisting and retrieve it from MYSQL
 class JobListing(db.Model):
-    __tablename__ = 'joblistings'
-    id = db.Column(db.Integer, primary_key=True)
-    title = db.Column(db.String(255), nullable=False)
-    company = db.Column(db.String(255))
-    location = db.Column(db.String(255))
-    description = db.Column(db.Text)
-    posted_date = db.Column(db.Date)
-    salary = db.Column(db.Numeric(10, 2))
-    contact_email = db.Column(db.String(255))
+    __tablename__ = 'job_listing'
+    Listing_ID = db.Column(db.Integer, primary_key=True)
+    Role_ID  = db.Column(db.Integer, nullable=False)
+    Opening  = db.Column(db.Integer)
+    Date_posted = db.Column(db.Date)
 
 #getting from the class above and send it to vue
 @app.route('/api/job-listings', methods=['GET'])
 def get_job_listings():
     job_listings_data = JobListing.query.all()
     job_listings = [{
-        'id': listing.id,
-        'title': listing.title,
-        'company': listing.company,
-        'location': listing.location,
-        'description': listing.description,
-        'posted_date': listing.posted_date.strftime('%Y-%m-%d'),
-        'salary': float(listing.salary) if listing.salary is not None else None,
-        'contact_email': listing.contact_email,
+        'Listing_ID': listing.Listing_ID,
+        'Role_ID': listing.Role_ID,
+        'Opening': listing.Opening,
+        'Date_posted': listing.Date_posted.strftime('%Y-%m-%d'),
     } for listing in job_listings_data]
 
     return jsonify(job_listings)
 
-class User(db.Model):
-    __tablename__ = 'users'
-    id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(255), unique=True, nullable=False)
-    password = db.Column(db.String(255), nullable=False)
+class Staff(db.Model):
+    __tablename__ = 'staff'
+    Staff_ID = db.Column(db.Integer, primary_key=True)
+    Staff_FName = db.Column(db.String(50), nullable=False)
+    Staff_LName = db.Column(db.String(50), nullable=False)
+    Email = db.Column(db.String(128), nullable=False)
+    Password = db.Column(db.String(128), nullable=False)
+    Dept = db.Column(db.String(50), nullable=False)
+    Country = db.Column(db.String(50), nullable=False)
+    Access_Level = db.Column(db.String(50), nullable=False)
+
 
 @app.route('/login', methods=['POST'])
 def login():
@@ -52,9 +50,9 @@ def login():
     password = data.get('password')
 
     # Query the database for the user
-    user = User.query.filter_by(username=username).first()
+    user = Staff.query.filter_by(Staff_ID=username).first()
 
-    if user and user.password == password:
+    if user and user.Password == password:
         return jsonify({"message": "Login successful"})
     else:
         return jsonify({"message": "Login failed"}), 401
