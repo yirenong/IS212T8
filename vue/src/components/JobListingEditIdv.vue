@@ -47,6 +47,11 @@ export default {
         });
     },
     updateJobListing() {
+      if (!this.job.Role.Role_Name || !this.job.Opening) {
+        window.alert('Please fill in all fields.');
+        return;
+      }
+
       const updatedJob = {
         Role_Name: this.job.Role.Role_Name,
         Opening: this.job.Opening,
@@ -56,7 +61,7 @@ export default {
       axios.put(`http://localhost:5000/api/job_list/${this.job.Listing_ID}`, updatedJob)
         .then(response => {
           console.log('Job Listing updated successfully:', response.data);
-          window.alert('Job Listing updated successfully.');  // Display an alert
+          window.alert('Job Listing updated successfully.'); 
         })
         .catch(error => {
           console.error('Error updating job listing:', error);

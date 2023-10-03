@@ -11,28 +11,6 @@ db = SQLAlchemy(app)
 cors = CORS(app, resources={r"/api/*": {"origins": "http://localhost:8080"}})
 CORS(app, resources={r"/login": {"origins": "http://localhost:8080"}})
 
-#Class for joblisting and retrieve it from MYSQL
-# class JobListing(db.Model):
-#     __tablename__ = 'job_listing'
-#     Listing_ID = db.Column(db.Integer, primary_key=True)
-#     Role_ID  = db.Column(db.Integer, nullable=False)
-#     Opening  = db.Column(db.Integer)
-#     Date_posted = db.Column(db.Date)
-
-# #getting from the class above and send it to vue
-# @app.route('/api/job-listings', methods=['GET'])
-# def get_job_listings():
-#     job_listings_data = JobListing.query.all()
-#     job_listings = [{
-#         'Listing_ID': listing.Listing_ID,
-#         'Role_ID': listing.Role_ID,
-#         'Opening': listing.Opening,
-#         'Date_posted': listing.Date_posted.strftime('%Y-%m-%d'),
-#     } for listing in job_listings_data]
-
-#     return jsonify(job_listings)
-# Define models
-
 ##################################################################################################################
 ### Get All Job Listings (Story #1) ###
 class JobListing(db.Model):
@@ -120,6 +98,24 @@ def get_all_roles():
     roles = Role.query.all()
     role_data = [role.to_dict() for role in roles]
     return jsonify(role_data)
+
+@app.route('/api/roles/<int:role_id>', methods=['PUT'])
+def update_role(role_id):
+    data = request.get_json()
+    role_name = data.get('Role_Name')
+    description = data.get('Description')
+
+    role = Role.query.get(role_id)
+
+    if role is None:
+        return jsonify({'message': 'Role not found'}), 404
+
+    role.Role_Name = role_name
+    role.Description = description
+
+    db.session.commit()
+
+    return jsonify(role.to_dict()), 200
 
 @app.route('/api/job_list/<int:listing_id>', methods=['PUT'])
 def update_job_listing(listing_id):

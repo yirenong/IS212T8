@@ -21,6 +21,16 @@ const routes = [
     name: 'editJobListing',
     component: () => import('./components/JobListingEditIdv.vue'),
   },
+  {
+    path: '/hr/role-listing',
+    name: 'rolelisting',
+    component: () => import('./components/RoleList.vue'),
+  },
+  {
+    path: '/hr/role-listing/edit/:id',
+    name: 'editRole',
+    component: () => import('./components/RoleListEdit.vue'),
+  },
   
 ];
 
