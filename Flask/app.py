@@ -70,10 +70,8 @@ class RoleSkill(db.Model):
     Role_ID = db.Column(db.Integer, db.ForeignKey('Role.Role_ID'), primary_key=True)
     Skill_ID = db.Column(db.Integer, db.ForeignKey('Skills.Skill_ID'), primary_key=True)
 
-class Skill(db.Model):
-    __tablename__ = 'Skills'
-    Skill_ID = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    Skill_Name = db.Column(db.String(64), nullable=False)
+
+    
 
 # API endpoint to fetch job listings with role information and associated skills
 @app.route('/api/job_list', methods=['GET'])
@@ -109,6 +107,54 @@ def login():
     else:
         return jsonify({"message": "Login failed"}), 401
 
+
+class Skill(db.Model):
+    __tablename__ = 'Skills'
+    Skill_ID = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    Skill_Name = db.Column(db.String(64), nullable=False)
+
+    def to_dict(self):
+        return {
+            'Skill_ID': self.Skill_ID,
+            'Skill_Name': self.Skill_Name
+        }
     
+
+class Staff_Skill(db.Model):
+    __tablename__ = 'Staff_Skill'
+    Staff_ID = db.Column(db.Integer, db.ForeignKey('staff.Staff_ID'), primary_key=True)
+    Skill_ID = db.Column(db.Integer, db.ForeignKey('Skills.Skill_ID'), primary_key=True)
+
+    def to_dict(self):
+        return {
+            'Staff_ID': self.Staff_ID,
+            'Skill_ID': self.Skill_ID
+        }
+
+@app.route('/api/skill_list', methods=['GET'])
+def get_skill_list():
+    skill_list_data = Skill.query.all()
+    skill_list = [skill.to_dict() for skill in skill_list_data]
+
+    return jsonify(skill_list)   
+
+@app.route('/api/staff_skill', methods=['GET'])
+def get_staff_skill():
+    staff_skill_data = Staff_Skill.query.all()
+    staff_list = Staff.query.all()
+    # only get staff_ID, fname, lname,dept from staff table
+    staff_skill = []
+    for staff in staff_list:
+        staff_skill.append({
+            'Staff_ID': staff.Staff_ID,
+            'Staff_FName': staff.Staff_FName,
+            'Staff_LName': staff.Staff_LName,
+            'Dept': staff.Dept,
+            'Skills': [skill.Skill_ID for skill in staff_skill_data if skill.Staff_ID == staff.Staff_ID]
+        })
+    # staff_skill = [skill.to_dict() for skill in staff_skill_data]
+
+    return jsonify(staff_skill)
+
 if __name__ == '__main__':
     app.run(debug=True)

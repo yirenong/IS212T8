@@ -4,6 +4,7 @@ import JobListing from '../components/JobListing.vue';
 import Login from '../components/LoginPage.vue';
 import AppHeader from '../components/AppHeader.vue';
 import Footer from '../components/FooterComp.vue';
+import SearchCandidate from '../components/SearchCandidate.vue';
 
 Vue.use(VueRouter);
 

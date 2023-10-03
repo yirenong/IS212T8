@@ -12,6 +12,9 @@
           <li class="nav-item">
             <router-link to="/login" class="nav-link">Login</router-link>
           </li>
+          <li class="nav-item">
+            <router-link to="/searchcandidate" class="nav-link">searchcandidates</router-link>
+          </li>
           <!-- Add more navigation links as needed -->
         </ul>
       </div>
