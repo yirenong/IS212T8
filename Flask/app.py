@@ -4,34 +4,15 @@ from flask_cors import CORS
 from sqlalchemy.orm import relationship
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root:@localhost/is212'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root:@localhost:3308/is212'
 db = SQLAlchemy(app)
 
 # Configure CORS to allow requests from your Vue.js frontend
 cors = CORS(app, resources={r"/api/*": {"origins": "http://localhost:8080"}})
 CORS(app, resources={r"/login": {"origins": "http://localhost:8080"}})
 
-#Class for joblisting and retrieve it from MYSQL
-# class JobListing(db.Model):
-#     __tablename__ = 'job_listing'
-#     Listing_ID = db.Column(db.Integer, primary_key=True)
-#     Role_ID  = db.Column(db.Integer, nullable=False)
-#     Opening  = db.Column(db.Integer)
-#     Date_posted = db.Column(db.Date)
-
-# #getting from the class above and send it to vue
-# @app.route('/api/job-listings', methods=['GET'])
-# def get_job_listings():
-#     job_listings_data = JobListing.query.all()
-#     job_listings = [{
-#         'Listing_ID': listing.Listing_ID,
-#         'Role_ID': listing.Role_ID,
-#         'Opening': listing.Opening,
-#         'Date_posted': listing.Date_posted.strftime('%Y-%m-%d'),
-#     } for listing in job_listings_data]
-
-#     return jsonify(job_listings)
-# Define models
+##################################################################################################################
+### Get All Job Listings (Story #1) ###
 class JobListing(db.Model):
     __tablename__ = 'Job_Listing'
     Listing_ID = db.Column(db.Integer, primary_key=True)
@@ -83,6 +64,8 @@ def get_job_listings():
 
     return jsonify(job_listings)
 
+#########################################################################################################################
+### Login ###
 class Staff(db.Model):
     __tablename__ = 'staff'
     Staff_ID = db.Column(db.Integer, primary_key=True)
@@ -93,7 +76,6 @@ class Staff(db.Model):
     Dept = db.Column(db.String(50), nullable=False)
     Country = db.Column(db.String(50), nullable=False)
     Access_Rights = db.Column(db.String(50), nullable=False)
-
 
 @app.route('/login', methods=['POST'])
 def login():
@@ -109,6 +91,55 @@ def login():
     else:
         return jsonify({"message": "Login failed"}), 401
 
-    
+##################################################################################################################
+### Maintain Job Listing (Story #2) ###
+@app.route('/api/roles', methods=['GET'])
+def get_all_roles():
+    roles = Role.query.all()
+    role_data = [role.to_dict() for role in roles]
+    return jsonify(role_data)
+
+@app.route('/api/roles/<int:role_id>', methods=['PUT'])
+def update_role(role_id):
+    data = request.get_json()
+    role_name = data.get('Role_Name')
+    description = data.get('Description')
+
+    role = Role.query.get(role_id)
+
+    if role is None:
+        return jsonify({'message': 'Role not found'}), 404
+
+    role.Role_Name = role_name
+    role.Description = description
+
+    db.session.commit()
+
+    return jsonify(role.to_dict()), 200
+
+@app.route('/api/job_list/<int:listing_id>', methods=['PUT'])
+def update_job_listing(listing_id):
+    data = request.get_json()
+
+    role_name = data.get('Role_Name')
+    opening = data.get('Opening')
+
+    job_listing = JobListing.query.get(listing_id)
+
+    if job_listing is None:
+        return jsonify({'message': 'Job listing not found'}), 404
+
+    role = Role.query.filter_by(Role_Name=role_name).first()
+    if role is None:
+        return jsonify({'message': 'Role not found'}), 404
+
+    job_listing.Role_ID = role.Role_ID
+    job_listing.Opening = opening
+
+    db.session.commit()
+
+    return jsonify(job_listing.to_dict()), 200
+
+
 if __name__ == '__main__':
     app.run(debug=True)
