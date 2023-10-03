@@ -12,6 +12,15 @@ const routes = [
     path: '/login',
     component: () => import('./components/LoginPage.vue'),
   },
+  {
+    path: '/hr/job-listing',
+    component: () => import('./components/JobListingEdit.vue'),
+  },
+  {
+    path: '/hr/job-listing/edit/:id',
+    name: 'editJobListing',
+    component: () => import('./components/JobListingEditIdv.vue'),
+  },
   
 ];
 
