@@ -15,7 +15,7 @@
       <button type="submit" class="btn btn-primary">Update</button>
     </form>
     <div class="mb-4">
-      <button type="submit" class="btn btn-secondary mt-4" @click="returnToListings" >Return to listings</button>
+      <button type="submit" class="btn btn-secondary mt-4 mb-4" @click="returnToListings" >Return to listings</button>
     </div>
     
   </div>

@@ -12,6 +12,7 @@
       </div>
       <button type="submit" class="btn btn-primary mb-2">Update</button>
     </form>
+    <button type="submit" class="btn btn-secondary mt-4 mb-4" @click="returnToListings" >Return to listings</button>
   </div>
 </template>
 
@@ -51,6 +52,9 @@ export default {
         .catch(error => {
           console.error('Error updating role:', error);
         });
+    },
+    returnToListings() {
+      this.$router.push('/hr/role-listing');
     },  
   },
 };
