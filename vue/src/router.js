@@ -13,6 +13,9 @@ const routes = [
     component: () => import('./components/LoginPage.vue'),
   },
   {
+    path: '/searchcandidate',
+    component: () => import('./components/SearchCandidate.vue'),
+  }
     path: '/hr/job-listing',
     component: () => import('./components/JobListingEdit.vue'),
   },
