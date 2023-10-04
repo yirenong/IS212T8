@@ -8,10 +8,7 @@ import SearchCandidate from '../components/SearchCandidate.vue';
 
 Vue.use(VueRouter);
 
-const routes = [
-  
-];
-
+const routes = [];
 
 const router = new VueRouter({
   routes,

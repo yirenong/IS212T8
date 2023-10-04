@@ -1,22 +1,33 @@
 <template>
-  <div>
+  <div class="container mt-4">
     <h2>Job Listings</h2>
-    <ul>
-      <li v-for="(job, index) in jobListings" :key="index">
-        <!-- <h3>{{ job.Listing_ID  }}</h3> -->
-        <p>Job Role: {{ job.Role.Role_Name }}</p>
-        <p>Job Description: {{ job.Role.Description }}</p>
-        <p>Number of Opening: {{ job.Opening }}</p>
-        <p>Date:{{ job.Date_posted }}</p>
-        <p>Skills:
+    <table class="table">
+    <thead>
+      <tr>
+        <th>Job Role</th>
+        <th>Job Description</th>
+        <th>Number of Opening</th>
+        <th>Date</th>
+        <th>Skills</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr v-for="(job, index) in jobListings" :key="index">
+        <td>{{ job.Role.Role_Name }}</td>
+        <td>{{ job.Role.Description }}</td>
+        <td>{{ job.Opening }}</td>
+        <td>{{ job.Date_posted }}</td>
+        <td>
           <ul>
             <li v-for="(skill, skillIndex) in job.Role.Skills" :key="skillIndex">
               {{ skill }}
             </li>
           </ul>
-        </p>
-      </li>
-    </ul>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+    
   </div>
 </template>
 
