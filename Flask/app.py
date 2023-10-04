@@ -77,6 +77,31 @@ class Staff(db.Model):
     Country = db.Column(db.String(50), nullable=False)
     Access_Rights = db.Column(db.String(50), nullable=False)
 
+    def to_dict(self):
+        return {
+            'Staff_ID': self.Staff_ID,
+            'Staff_FName': self.Staff_FName,
+            'Staff_LName': self.Staff_LName,
+            'Email': self.Email,
+            'Password': self.Password,
+            'Dept': self.Dept,
+            'Country': self.Country,
+            'Access_Rights': self.Access_Rights
+        } 
+        
+class Staff_Skill(db.Model):
+    __tablename__ = 'staff_skill'
+    Staff_ID = db.Column(db.Integer, primary_key=True, foreign_key=True)
+    Skill_ID = db.Column(db.Integer, primary_key=True,foreign_key=True)
+    Skill_Name = db.Column(db.String(64), nullable=False)
+    
+    def to_dict(self):
+        return {
+            'Staff_ID': self.Staff_ID,
+            'Skill_ID': self.Skill_ID,
+            'Skill_Name': self.Skill_Name
+        }
+        
 @app.route('/login', methods=['POST'])
 def login():
     data = request.get_json()
@@ -139,6 +164,24 @@ def update_job_listing(listing_id):
     db.session.commit()
 
     return jsonify(job_listing.to_dict()), 200
+
+#search staffs' id using provided skill id, and display infor of matching staffs
+@app.route("/api/search_by_skill/<int:Skill_ID>",methods=["GET"])
+def get_all_staff_by_Skill(Skill_ID):
+    skills = Staff_Skill.query.filter_by(Skill_ID=Skill_ID)
+    skills_data = [skill.to_dict() for skill in skills]
+    
+    staff_ids = [item["Staff_ID"] for item in skills_data]
+    
+    staffs = Staff.query.filter(Staff.Staff_ID.in_(staff_ids))
+    staffs_data = [staff.to_dict() for staff in staffs]
+    return jsonify(staffs_data),200
+
+@app.route("/api/search_by_staff_id/<int:Staff_ID>",methods=["GET"])
+def get_skill_by_staff_id(Staff_ID):
+    skills = Staff_Skill.query.filter_by(Staff_ID=Staff_ID)
+    skills_d = [skill.to_dict() for skill in skills]
+    return jsonify(skills_d)
 
 
 if __name__ == '__main__':
