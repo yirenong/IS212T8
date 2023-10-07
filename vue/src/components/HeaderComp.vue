@@ -18,11 +18,25 @@
           <!-- Add more navigation links as needed -->
         </ul>
       </div>
+      <!-- write if for div -->
+      <div v-if="$session.get('user') != null">
+        <span class="navbar-text">
+          Welcome {{ $session.get('user').Staff_FName }}
+        </span>
+        <button type="submit" class="btn btn-danger" @click="logout()">Logout</button>
+      </div>
+      
     </nav>
   </template>
   
   <script>
   export default {
+    methods: {
+      logout() {
+        this.$session.destroy()
+        this.$router.go(0);
+      }
+    }
   };
   </script>
   

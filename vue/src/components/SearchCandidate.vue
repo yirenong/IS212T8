@@ -1,5 +1,5 @@
 <template>
-    <div>
+    <div v-if="$session.get('user').Dept == 'HR'">
         <h2>Search Candidates</h2>
         <!-- select to filter  -->
         <!-- <select v-model="selectedSkill" @change="onChange($event)">
@@ -43,6 +43,9 @@
             </tbody> -->
         </table>
     </div>
+    <div v-else>
+        <H1 style="color:red">You are not authorized to view this page</H1>
+    </div>
 </template>
   
 <script>
@@ -62,12 +65,19 @@ import axios from "axios";
 import $ from "jquery";
 
 export default {
+    mounted() {
+        console.log('Component mounted.')
+        console.log(this.$session.get('user'))
+        if (this.$session.get('user') ==  null) {
+            this.$router.go(0);
+        }
+    },
     data() {
         return {
             selectedSkill: 'All',
             skill_list: [],
             staff_skill: [],
-            filtered_staff_skill: []
+            filtered_staff_skill: [],
         };
     },
     methods: {
@@ -82,6 +92,7 @@ export default {
         }
     },
     created() {
+        
         axios.get('http://localhost:5000/api/skill_list')
             .then(response => {
                 this.skill_list = response.data;

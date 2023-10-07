@@ -13,33 +13,46 @@
           placeholder="Enter your password" required />
       </div>
       <button type="submit" class="btn btn-primary">Login</button>
+      <button type="submit" class="btn btn-danger" @click="logout()">Logout</button>
     </form>
     <div v-if="loginError" class="alert alert-danger mt-3">
       {{ loginError }}
     </div>
   </div>
 </template>
-
 <script>
+
 import axios from 'axios';
 
 export default {
   data() {
     return {
       formData: {
-        username: '',
-        password: '',
+        username: '10002',
+        password: 'password',
       },
       loginError: null,
     };
   },
   methods: {
+    logout() {
+      this.$session.destroy()
+      this.$router.go(0);
+    },
     login() {
+      console.log(this.formData)
       axios
-        .post('http://localhost:5000/login', this.formData)
+        .post('http://localhost:5000/api/login', this.formData)
         .then(response => {
-          console.log(response.data.message); // Log the response message
+          console.log(response.data); // Log the response message
+          //vue set localstorage for response.data
+          // this.$cookies.set('user', response.data.Dept);
+          this.$session.start()
+          this.$session.set('user', response.data);
+          this.$router.go(0);
+
           // Redirect or perform actions upon successful login
+          // set session storage
         })
         .catch(error => {
           console.error('Error during login:', error);

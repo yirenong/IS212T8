@@ -3,23 +3,28 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 from sqlalchemy.orm import relationship
 
+
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root:@localhost:3308/is212'
+# app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root:@localhost:3308/is212'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root:@localhost:3306/is212'
 db = SQLAlchemy(app)
 
 # Configure CORS to allow requests from your Vue.js frontend
 cors = CORS(app, resources={r"/api/*": {"origins": "http://localhost:8080"}})
-CORS(app, resources={r"/login": {"origins": "http://localhost:8080"}})
+# CORS(app, resources={r"/api/*": {"origins": "http://localhost:8080/"}})
 
 ##################################################################################################################
 ### Get All Job Listings (Story #1) ###
+
+
 class JobListing(db.Model):
     __tablename__ = 'Job_Listing'
     Listing_ID = db.Column(db.Integer, primary_key=True)
-    Role_ID = db.Column(db.Integer, db.ForeignKey('Role.Role_ID'), nullable=False)
+    Role_ID = db.Column(db.Integer, db.ForeignKey(
+        'Role.Role_ID'), nullable=False)
     Opening = db.Column(db.Integer)
     Date_posted = db.Column(db.Date)
-    
+
     role = relationship('Role', backref='job_listings')
 
     def to_dict(self):
@@ -29,6 +34,7 @@ class JobListing(db.Model):
             'Opening': self.Opening,
             'Date_posted': self.Date_posted.strftime('%Y-%m-%d'),
         }
+
 
 class Role(db.Model):
     __tablename__ = 'Role'
@@ -46,13 +52,14 @@ class Role(db.Model):
             'Skills': [skill.Skill_Name for skill in self.skills]
         }
 
+
 class RoleSkill(db.Model):
     __tablename__ = 'Role_Skill'
-    Role_ID = db.Column(db.Integer, db.ForeignKey('Role.Role_ID'), primary_key=True)
-    Skill_ID = db.Column(db.Integer, db.ForeignKey('Skills.Skill_ID'), primary_key=True)
+    Role_ID = db.Column(db.Integer, db.ForeignKey(
+        'Role.Role_ID'), primary_key=True)
+    Skill_ID = db.Column(db.Integer, db.ForeignKey(
+        'Skills.Skill_ID'), primary_key=True)
 
-
-    
 
 # API endpoint to fetch job listings with role information and associated skills
 @app.route('/api/job_list', methods=['GET'])
@@ -64,6 +71,8 @@ def get_job_listings():
 
 #########################################################################################################################
 ### Login ###
+
+
 class Staff(db.Model):
     __tablename__ = 'staff'
     Staff_ID = db.Column(db.Integer, primary_key=True)
@@ -74,8 +83,10 @@ class Staff(db.Model):
     Dept = db.Column(db.String(50), nullable=False)
     Country = db.Column(db.String(50), nullable=False)
     Access_Rights = db.Column(db.String(50), nullable=False)
+    skills = db.relationship('Staff_Skill', backref='staff')
 
-@app.route('/login', methods=['POST'])
+
+@app.route('/api/login', methods=['POST'])
 def login():
     data = request.get_json()
     username = data.get('username')
@@ -83,15 +94,30 @@ def login():
 
     # Query the database for the user
     user = Staff.query.filter_by(Staff_ID=username).first()
+    if username and user.Password == password:
+        userData = {
+                'message': '',
+                'Staff_ID': user.Staff_ID,
+                'Staff_FName': user.Staff_FName,
+                'Staff_LName': user.Staff_LName,
+                'Dept': user.Dept
+            }
+        if user.Dept == 'HR':
+            userData['message'] = 'Mangement Login'
 
-    if user and user.Password == password:
-        return jsonify({"message": "Login successful"})
+            return jsonify(userData), 200
+        else:
+            userData['message'] = "STAFF Login"
+            return jsonify(userData), 200
+
+            # return redirect(url_for('http://localhost:5000/api/job_list'))
+        # return jsonify({"message": "Login successful"}), 200
     else:
         return jsonify({"message": "Login failed"}), 401
 
-
 #########################################################################################################################
-# SearchcandidatesbtSkills 
+# SearchcandidatesbtSkills
+
 
 class Skill(db.Model):
     __tablename__ = 'Skills'
@@ -103,12 +129,14 @@ class Skill(db.Model):
             'Skill_ID': self.Skill_ID,
             'Skill_Name': self.Skill_Name
         }
-    
+
 
 class Staff_Skill(db.Model):
     __tablename__ = 'Staff_Skill'
-    Staff_ID = db.Column(db.Integer, db.ForeignKey('staff.Staff_ID'), primary_key=True)
-    Skill_ID = db.Column(db.Integer, db.ForeignKey('Skills.Skill_ID'), primary_key=True)
+    Staff_ID = db.Column(db.Integer, db.ForeignKey(
+        'staff.Staff_ID'), primary_key=True)
+    Skill_ID = db.Column(db.Integer, db.ForeignKey(
+        'Skills.Skill_ID'), primary_key=True)
 
     def to_dict(self):
         return {
@@ -116,12 +144,24 @@ class Staff_Skill(db.Model):
             'Skill_ID': self.Skill_ID
         }
 
+
+@app.route('/api/search_staff_by_skill', methods=['GET'])
+def search_staff_by_skill():
+    datalist = [1, 2]
+    staff_list = Staff_Skill.query.filter(
+        Staff_Skill.Skill_ID.in_(datalist)).all()
+
+    staff_list = [staff.to_dict() for staff in staff_list]
+    return jsonify(staff_list)
+
+
 @app.route('/api/skill_list', methods=['GET'])
 def get_skill_list():
     skill_list_data = Skill.query.all()
     skill_list = [skill.to_dict() for skill in skill_list_data]
 
-    return jsonify(skill_list)   
+    return jsonify(skill_list)
+
 
 @app.route('/api/staff_skill', methods=['GET'])
 def get_staff_skill():
@@ -143,11 +183,14 @@ def get_staff_skill():
 
 ##################################################################################################################
 ### Maintain Job Listing (Story #2) ###
+
+
 @app.route('/api/roles', methods=['GET'])
 def get_all_roles():
     roles = Role.query.all()
     role_data = [role.to_dict() for role in roles]
     return jsonify(role_data)
+
 
 @app.route('/api/roles/<int:role_id>', methods=['PUT'])
 def update_role(role_id):
@@ -166,6 +209,7 @@ def update_role(role_id):
     db.session.commit()
 
     return jsonify(role.to_dict()), 200
+
 
 @app.route('/api/job_list/<int:listing_id>', methods=['PUT'])
 def update_job_listing(listing_id):
