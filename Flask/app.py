@@ -2,7 +2,7 @@ from flask import Flask, jsonify, request
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 from sqlalchemy.orm import relationship
-
+from sqlalchemy import func
 
 app = Flask(__name__)
 # app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root:@localhost:3308/is212'
@@ -145,14 +145,32 @@ class Staff_Skill(db.Model):
         }
 
 
-@app.route('/api/search_staff_by_skill', methods=['GET'])
+@app.route('/api/search_staff_by_skill', methods=['POST'])
 def search_staff_by_skill():
-    datalist = [1, 2]
-    staff_list = Staff_Skill.query.filter(
-        Staff_Skill.Skill_ID.in_(datalist)).all()
+    userrequest = request.get_json()
+    datalist = userrequest.get('selected')
+    exactmatch = userrequest.get('exactmatch')
 
-    staff_list = [staff.to_dict() for staff in staff_list]
-    return jsonify(staff_list)
+    numbersofskills = len(datalist)-1 if exactmatch == 1 else 1
+    print(numbersofskills)
+    staff_skillslist =Staff_Skill.query.filter(Staff_Skill.Skill_ID.in_(datalist)).group_by(Staff_Skill.Staff_ID).having(func.count(Staff_Skill.Skill_ID) >=numbersofskills).with_entities(Staff_Skill.Staff_ID).all()
+    staff_id = [staff[0] for staff in staff_skillslist]
+
+    staff_list = Staff.query.filter(Staff.Staff_ID.in_(staff_id)).all()
+    skill_list = Staff_Skill.query.filter(Staff_Skill.Staff_ID.in_(staff_id)).all()
+    
+    staff_data = []
+    for staff in staff_list:
+        staff_data.append({
+            'Staff_ID': staff.Staff_ID,
+            'Staff_FName': staff.Staff_FName,
+            'Staff_LName': staff.Staff_LName,
+            'Dept': staff.Dept,
+            'Skills': [skill.Skill_ID for skill in skill_list if skill.Staff_ID == staff.Staff_ID]
+        })
+    return jsonify(staff_data)
+    
+    # return jsonify(staff_skillslist)
 
 
 @app.route('/api/skill_list', methods=['GET'])
