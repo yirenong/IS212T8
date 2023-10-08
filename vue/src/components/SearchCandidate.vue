@@ -140,7 +140,7 @@ export default {
         console.log('Component mounted.')
         console.log(this.$session.get('user'))
         if (this.$session.get('user') == null) {
-            this.$router.go(0);
+            this.$router.push('/login')
         }
     },
     data() {

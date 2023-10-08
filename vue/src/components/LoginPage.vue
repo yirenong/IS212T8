@@ -50,7 +50,7 @@ export default {
           this.$session.start()
           this.$session.set('user', response.data);
           this.$router.go(0);
-
+          
           // Redirect or perform actions upon successful login
           // set session storage
         })
