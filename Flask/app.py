@@ -5,7 +5,7 @@ from sqlalchemy.orm import relationship
 from sqlalchemy import func
 
 app = Flask(__name__)
-# app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root:@localhost:3308/is212'
+#app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root:@localhost:3308/is212'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root:@localhost:3306/is212'
 db = SQLAlchemy(app)
 
@@ -103,7 +103,7 @@ def login():
                 'Dept': user.Dept
             }
         if user.Dept == 'HR':
-            userData['message'] = 'Mangement Login'
+            userData['message'] = 'Management Login'
 
             return jsonify(userData), 200
         else:
