@@ -1,5 +1,5 @@
 <template>
-  <canvas ref="doughnutChart" class="w-50 h-50"></canvas>
+  <canvas ref="doughnutChart" class="w-75 h-75"></canvas>
 </template>
 
 <script>
