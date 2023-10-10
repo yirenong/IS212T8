@@ -253,5 +253,35 @@ def update_job_listing(listing_id):
     return jsonify(job_listing.to_dict()), 200
 
 
+##################################################################################################################
+### Staff Skills ###
+@app.route('/api/staff_skill/<int:staff_id>', methods=['GET'])
+def get_staff_skill_by_id(staff_id):
+    # Get staff details for the given staff_id
+    staff = Staff.query.filter_by(Staff_ID=staff_id).first()
+
+    if not staff:
+        return jsonify({'message': 'Staff not found'}), 404
+
+    # Get skills for the given staff_id and fetch their names
+    staff_skills = (
+        db.session.query(Skill)
+        .join(Staff_Skill, Skill.Skill_ID == Staff_Skill.Skill_ID)
+        .filter(Staff_Skill.Staff_ID == staff_id)
+        .all()
+    )
+    
+    skill_names = [skill.Skill_Name for skill in staff_skills]
+
+    staff_skill_data = {
+        'Staff_ID': staff.Staff_ID,
+        'Staff_FName': staff.Staff_FName,
+        'Staff_LName': staff.Staff_LName,
+        'Dept': staff.Dept,
+        'Skills': skill_names 
+    }
+
+    return jsonify(staff_skill_data), 200
+
 if __name__ == '__main__':
     app.run(debug=True)
