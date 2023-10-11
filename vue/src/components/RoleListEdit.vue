@@ -49,8 +49,8 @@ export default {
   },
   created() {
     const roleId = parseInt(this.$route.params.id, 5);
-    console.log("roleID:", typeof(roleId));
-    axios.get(`http://localhost:5000/api/roles/1`)
+    console.log("roleID:", roleId);
+    axios.get(`http://localhost:5000/api/roles/${roleId}`)
     .then(response => {
       this.role = response.data;
       this.fetchSkills();
@@ -98,8 +98,10 @@ export default {
             role_id: this.role.Role_ID,
             skill_ids: this.selectedSkills
           };
-
-          return axios.post('http://localhost:5000/api/update_role_skills', roleSkillData);
+          console.log("roleSkillData:", roleSkillData)
+          if (roleSkillData.skill_ids.length !== 0) {
+            return axios.post('http://localhost:5000/api/update_role_skills', roleSkillData);
+          }
         })
         .then(() => {
           window.alert('Role and role skills updated successfully.');
