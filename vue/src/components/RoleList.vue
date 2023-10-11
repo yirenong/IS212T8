@@ -53,7 +53,7 @@ export default {
     editRole(role) {
       this.$router.push({
         name: 'editRole',
-        params: { role: role },
+        params: { id: role.Role_ID},
       });
     },
     

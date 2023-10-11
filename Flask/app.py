@@ -173,24 +173,26 @@ def search_staff_by_skill():
     # return jsonify(staff_skillslist)
 
 ## role skill
-@app.route('/api/add_role_skill', methods=['POST'])
-def add_role_skill():
+@app.route('/api/update_role_skills', methods=['POST'])
+def update_role_skills():
     data = request.get_json()
     role_id = data.get('role_id')
-    skill_id = data.get('skill_id')
+    skill_ids = data.get('skill_ids')
 
-    if not role_id or not skill_id:
-        return jsonify({'message': 'Both role_id and skill_id are required'}), 400
-
-    new_role_skill = RoleSkill(Role_ID=role_id, Skill_ID=skill_id)
+    if not role_id or not skill_ids:
+        return jsonify({'message': 'Both role_id and skill_ids are required'}), 400
 
     try:
-        db.session.add(new_role_skill)
+        # Add/update role skills
+        for skill_id in skill_ids:
+            new_role_skill = RoleSkill(Role_ID=role_id, Skill_ID=skill_id)
+            db.session.add(new_role_skill)
+
         db.session.commit()
-        return jsonify({'message': 'RoleSkill added successfully'}), 201
+        return jsonify({'message': 'Role skills updated successfully'}), 201
     except Exception as e:
         db.session.rollback()
-        return jsonify({'message': 'Error adding RoleSkill', 'error': str(e)}), 500
+        return jsonify({'message': 'Error updating role skills', 'error': str(e)}), 500
     finally:
         db.session.close()
 
@@ -229,6 +231,15 @@ def get_all_roles():
     roles = Role.query.all()
     role_data = [role.to_dict() for role in roles]
     return jsonify(role_data)
+
+@app.route('/api/roles/<int:role_id>', methods=['GET'])
+def get_role_by_id(role_id):
+    role = Role.query.get(role_id)
+    if not role:
+        return jsonify({'message': 'Role not found'}), 404
+
+    role_data = role.to_dict()
+    return jsonify(role_data), 200
 
 
 @app.route('/api/roles/<int:role_id>', methods=['PUT'])
