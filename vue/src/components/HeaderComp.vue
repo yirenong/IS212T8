@@ -50,6 +50,17 @@ export default {
     if (this.$session.get('user')) {
       this.isAuthenticated = true;
       this.user = this.$session.get('user');
+      if (this.user.Dept === 'HR')
+      {
+        this.$router.push('/hr/job-listing'); // Redirect to job listing page
+      }
+      else{
+        this.$router.push('/staff/job-listing'); // Redirect to job listing page
+      }
+      
+    }
+    else{
+      this.$router.push('/'); // Redirect to login page
     }
   },
   computed: {
@@ -63,7 +74,7 @@ export default {
   methods: {
     logout() {
       this.$session.destroy();
-      this.$router.push('/');
+      this.$router.go(0);
     },
     print(){
       console.log(this.user);      
