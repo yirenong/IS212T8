@@ -65,6 +65,7 @@ export default {
           } else {
             this.loginError = 'Invalid login message. Please contact your administrator.';
           }
+          this.$router.go(0);
         })
         .catch(error => {
           console.error('Error during login:', error);

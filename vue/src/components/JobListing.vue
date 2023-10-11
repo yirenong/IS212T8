@@ -107,7 +107,13 @@ export default {
     };
   },
   created() {
-    this.loadData();
+    if (this.$session.get('user') == null) {
+      this.$router.push('/login'); // Redirect to login page
+    }
+    else{
+      this.loadData();
+    }
+    
   },
   methods: {
     async loadData() {
