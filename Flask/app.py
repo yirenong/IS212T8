@@ -172,6 +172,27 @@ def search_staff_by_skill():
     
     # return jsonify(staff_skillslist)
 
+## role skill
+@app.route('/api/add_role_skill', methods=['POST'])
+def add_role_skill():
+    data = request.get_json()
+    role_id = data.get('role_id')
+    skill_id = data.get('skill_id')
+
+    if not role_id or not skill_id:
+        return jsonify({'message': 'Both role_id and skill_id are required'}), 400
+
+    new_role_skill = RoleSkill(Role_ID=role_id, Skill_ID=skill_id)
+
+    try:
+        db.session.add(new_role_skill)
+        db.session.commit()
+        return jsonify({'message': 'RoleSkill added successfully'}), 201
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({'message': 'Error adding RoleSkill', 'error': str(e)}), 500
+    finally:
+        db.session.close()
 
 @app.route('/api/skill_list', methods=['GET'])
 def get_skill_list():
