@@ -6,7 +6,7 @@
         <tr>
           <th>Job Role</th>
           <th>Job Description</th>
-          <th>Number of Opening</th>
+          <th>Number of Openings</th>
           <th>Date</th>
           <th>Skills</th>
           <th>Actions</th>
