@@ -1,53 +1,65 @@
 <template>
-    <div class="container m-2">
-      <div class="card">
-        <div class="card-header">
-          <h2>Job Details</h2>
+  <div class="container m-2">
+    <div class="card">
+      <div class="card-header">
+        <h2>Job Details</h2>
+      </div>
+      <div class="card-body">
+        <!-- Title -->
+        <div class="form-group">
+          <label for="title">Title:</label>
+          <input type="text" id="title" class="form-control" v-model="job.Role.Role_Name" disabled>
         </div>
-        <div class="card-body">
-          <div class="job-info">
-            <h4>Title:</h4>
-            <p>{{ this.job.Role.Role_Name }}</p>
-          </div>
-          <div class="job-info">
-            <h4>Description:</h4>
-            <p>{{ this.job.Role.Description }}</p>
-          </div>
-          <div class="job-info">
-            <h4>Opening:</h4>
-            <p>{{ this.job.Opening }}</p>
-          </div>
-          <div>
-            <h4>Skills</h4>
-            <ul v-for="skill in this.job.Role.Skills" :key="skill">
-                <li>{{ skill }}</li>
-            </ul>
-          </div>
+        
+        <!-- Description -->
+        <div class="form-group">
+          <label for="description">Description:</label>
+          <textarea id="description" class="form-control" v-model="job.Role.Description" disabled></textarea>
         </div>
-  
-        <div class="card-header">
-          <h2>User Profile</h2>
+
+        <!-- Opening -->
+        <div class="form-group">
+          <label for="opening">Opening:</label>
+          <input type="text" id="opening" class="form-control" v-model="job.Opening" disabled>
         </div>
-        <div class="card-body">
-          <div class="profile-info">
-            <h4>First Name:</h4>
-            <p>{{ this.user.Staff_FName }}</p>
-          </div>
-          <div class="profile-info">
-            <h4>Last Name:</h4>
-            <p>{{ this.user.Staff_LName }}</p>
-          </div>
-          <div class="profile-info">
-            <h4>Current Department:</h4>
-            <p>{{ this.user.Dept }}</p>
-          </div>
-        </div>
-  
-        <div class="card-body">
-          <button class="btn btn-success" @click="apply">Apply</button>
+
+        <!-- Skills -->
+        <div class="form-group">
+          <label for="skills">Skills:</label>
+          <ul>
+            <li v-for="skill in job.Role.Skills" :key="skill">{{ skill }}</li>
+          </ul>
         </div>
       </div>
+
+      <div class="card-header">
+        <h2>User Profile</h2>
+      </div>
+      <div class="card-body">
+        <!-- First Name -->
+        <div class="form-group">
+          <label for="firstName">First Name:</label>
+          <input type="text" id="firstName" class="form-control" v-model="user.Staff_FName" disabled>
+        </div>
+
+        <!-- Last Name -->
+        <div class="form-group">
+          <label for="lastName">Last Name:</label>
+          <input type="text" id="lastName" class="form-control" v-model="user.Staff_LName" disabled>
+        </div>
+
+        <!-- Current Department -->
+        <div class="form-group">
+          <label for="department">Current Department:</label>
+          <input type="text" id="department" class="form-control" v-model="user.Dept" disabled>
+        </div>
+      </div>
+
+      <div class="card-body">
+        <button class="btn btn-success" @click="apply">Apply</button>
+      </div>
     </div>
+  </div>
 </template>
   
   
@@ -94,12 +106,21 @@ export default {
             console.log('User Data:', this.user);
         },
         apply(){
-            // decrement opening number
             this.application.Date = new Date().toISOString();
             console.log("application: ", this.application)
             axios.post('http://localhost:5000/api/job_listing/apply', this.application)
             .then(response => {
-                alert("Application submitted successfully");
+                alert(`Application submitted successfully
+                      Role Applied: ${ this.job.Role.Role_Name }
+                      Date of Application: ${ this.application.Date }
+                `);
+                axios.put(`http://localhost:5000/api/job_listing/${this.job.Listing_ID}/decrement_opening`)
+                .then(response => {
+                  console.log('Opening decremented successfully:', response.data);
+                })
+                .catch(error => {
+                  console.error('Error decrementing opening:', error);
+                });
                 console.log('Application submitted successfully:', response.data);
             })
             .catch(error => {

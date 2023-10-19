@@ -87,6 +87,13 @@ class Application(db.Model):
     Date = db.Column(db.String, nullable=False)
     Status = db.Column(db.String, nullable=False)
 
+@app.route('/api/job_listing/<int:Staff_ID>/applications', methods=['GET'])
+def get_applications(Staff_ID):
+    applications = Application.query.filter_by(Staff_ID=Staff_ID).all()
+    application_data = [application.Role_ID for application in applications]
+
+    return jsonify(application_data)
+
 @app.route('/api/job_listing/apply', methods=['POST'])
 def apply():
     data = request.get_json()
@@ -278,6 +285,21 @@ def get_role_by_id(role_id):
 
     role_data = role.to_dict()
     return jsonify(role_data), 200
+
+@app.route('/api/job_listing/<int:listing_id>/decrement_opening', methods=['PUT'])
+def decrement_opening(listing_id):
+    job_listing = JobListing.query.get(listing_id)
+
+    if job_listing is None:
+        return jsonify({'message': 'Job listing not found'}), 404
+
+    if job_listing.Opening > 0:
+        job_listing.Opening -= 1
+        db.session.commit()
+        return jsonify({'message': 'Opening decremented by 1'}), 200
+    else:
+        return jsonify({'message': 'No more openings available'}), 400
+
 
 
 @app.route('/api/roles/<int:role_id>', methods=['PUT'])
