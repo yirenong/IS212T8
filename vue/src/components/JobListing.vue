@@ -89,6 +89,12 @@
                   </div>
                 </div>
               </div>
+              <hr>
+              <div class="m-2">
+                <button class="btn btn-success" @click="apply(job.Role.Role_ID)" :disabled="isRoleAlreadyApplied(job.Role.Role_ID)">
+                  Apply
+                </button>
+              </div>
             </div>
 
             <div class="col-md-4">
@@ -138,6 +144,7 @@ export default {
       searchbyname: '',
       filterbydate: 'latest',
       sortcheckbox: false,
+      appliedRoles: null,
     };
   },
   created() {
@@ -154,7 +161,8 @@ export default {
     computedList: function () {
       var vm = this;
       return this.jobListings.filter(function (item) {
-        return item.Role.Role_Name.toLowerCase().indexOf(vm.searchbyname.toLowerCase()) !== -1
+        return item.Role.Role_Name.toLowerCase().indexOf(vm.searchbyname.toLowerCase()) !== -1 &&
+        item.Opening > 0;
       })
     }
   },
@@ -170,6 +178,10 @@ export default {
         if (this.$session.get('user')) {
           this.userData = this.$session.get('user');
           console.log('User Data:', this.userData);
+
+          const appliedRolesResponse = await axios.get(`http://localhost:5000/api/job_listing/${this.userData.Staff_ID}/applications`);
+          this.appliedRoles = appliedRolesResponse.data;
+          console.log('Applied Roles:', this.appliedRoles);
 
           // Fetch staff skills
           const staffSkillsResponse = await axios.get(`http://localhost:5000/api/staff_skill/${this.userData.Staff_ID}`);
@@ -208,6 +220,13 @@ export default {
     },
     leftoverSkills(jobSkills, staffSkills) {
       return jobSkills.filter(skill => !staffSkills.includes(skill));
+    },
+    isRoleAlreadyApplied(roleId) {
+      // Check if the roleId appears in appliedRoles
+      return this.appliedRoles.includes(roleId);
+    },
+    apply(role_id){
+      this.$router.push({ name: 'applyJob', params: { id: role_id } });
     },
     sortbyalphabetical: function(){
       if (this.sortcheckbox == true) {
