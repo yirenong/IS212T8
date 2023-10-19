@@ -10,6 +10,12 @@ const routes = [
     meta: { allowedRoles: ['Staff'] },
   },
   {
+    path: 'staff/job-listing/apply/:id',
+    name: 'applyJob',
+    component: () => import('./components/ApplyJob.vue'),
+    meta: { allowedRoles: ['Staff'] },
+  },
+  {
     path: '/',
     component: () => import('./components/LoginPage.vue'),
   },

@@ -89,6 +89,12 @@
                   </div>
                 </div>
               </div>
+              <hr>
+              <div class="m-2">
+                <button class="btn btn-success" @click="apply(job.Listing_ID)">
+                  Apply
+                </button>
+              </div>
             </div>
 
             <div class="col-md-4">
@@ -208,6 +214,9 @@ export default {
     },
     leftoverSkills(jobSkills, staffSkills) {
       return jobSkills.filter(skill => !staffSkills.includes(skill));
+    },
+    apply(role_id){
+      this.$router.push({ name: 'applyJob', params: { id: role_id } });
     },
     sortbyalphabetical: function(){
       if (this.sortcheckbox == true) {

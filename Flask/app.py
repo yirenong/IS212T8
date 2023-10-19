@@ -5,8 +5,8 @@ from sqlalchemy.orm import relationship
 from sqlalchemy import func
 
 app = Flask(__name__)
-#app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root:@localhost:3308/is212'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root:@localhost:3306/is212'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root:@localhost:3308/is212'
+#app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root:@localhost:3306/is212'
 db = SQLAlchemy(app)
 
 # Configure CORS to allow requests from your Vue.js frontend
@@ -68,6 +68,44 @@ def get_job_listings():
     job_listings = [listing.to_dict() for listing in job_listings_data]
 
     return jsonify(job_listings)
+
+## New code
+@app.route('/api/job_list/<int:listing_id>', methods=['GET'])
+def get_job_listing_by_id(listing_id):
+    job_listing = JobListing.query.get(listing_id)
+
+    if job_listing is not None:
+        return jsonify(job_listing.to_dict())
+    else:
+        return jsonify({"error": "Job listing not found"}, 404)
+
+class Application(db.Model):
+    __tablename__ = 'application'
+    Application_ID = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    Staff_ID = db.Column(db.Integer, nullable=False)
+    Role_ID = db.Column(db.Integer, nullable=False)
+    Date = db.Column(db.String, nullable=False)
+    Status = db.Column(db.String, nullable=False)
+
+@app.route('/api/job_listing/apply', methods=['POST'])
+def apply():
+    data = request.get_json()
+    
+    staff_id = data.get('Staff_ID')
+    role_id = data.get('Role_ID')
+    date = data.get('Date')
+    status = data.get('Status')
+
+    if staff_id is None or role_id is None or date is None or status is None:
+        return jsonify({'error': 'Missing required fields'}), 400
+
+    new_application = Application(Staff_ID=staff_id, Role_ID=role_id, Date=date, Status=status)
+
+    db.session.add(new_application)
+    db.session.commit()
+
+    return jsonify({'message': 'Application submitted successfully'}), 201
+
 
 #########################################################################################################################
 ### Login ###
