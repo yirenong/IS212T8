@@ -27,6 +27,9 @@
         <li class="nav-item" v-if="isHR">
           <router-link to="/hr/job-creation" class="nav-link">Job Creation</router-link>
         </li>
+        <li class="nav-item" v-if="isHR">
+          <router-link to="/hr/role-creation" class="nav-link">Role Creation</router-link>
+        </li>
       </ul>
     </div>
     <div v-if="$session.get('user') != null">
