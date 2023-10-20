@@ -17,8 +17,10 @@
                     {{ role.Role_Name }}
                 </li>
             </ul>
-            <button class="btn btn-secondary" @click.prevent="addRole">Select Role</button>
             </div>
+        </div>
+        <div class="alert alert-danger" v-if="formErrors.title" role="alert">
+            {{ formErrors.title }}
         </div>
 
         <!-- No of Opening Field -->
@@ -32,19 +34,6 @@
             {{ formErrors.opening }}
         </div>
 
-        <!-- Skills Needed Field -->
-        <div>
-            <p>Skills Needed: </p>
-            <ul class="list-group list-group-horizontal">
-                <li v-for="(skill, index) in formData.skills"
-                :key="index" 
-                class="list-group-item">
-                    <span>{{ skill }}</span>
-                    <button @click.prevent="removeSkill(skill)" type="button" class="close" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                </li>
-            </ul>
-        </div>
-  
         <!-- Salary Field -->
         <!-- <div class="form-group row mb-3">
           <label for="salary" class="col-sm-2 col-form-label">Salary</label>
@@ -66,16 +55,10 @@
         <div class="alert alert-danger" v-if="formErrors.personOfContact" role="alert">
             {{ formErrors.personOfContact }}
         </div>
-  
-        <!-- Description Field -->
-        <div class="form-group mb-5">
-          <label for="description" class="mb-2">Description</label>
-          <textarea v-model="formData.description" class="form-control" id="description" rows="3"></textarea>
-        </div>
-        <div class="alert alert-danger" v-if="formErrors.description" role="alert">
-            {{ formErrors.description }}
-        </div>
-  
+
+        <p>Skills Needed: {{ formData.skills }}</p>
+        <p>Description: {{ formData.description }}</p>
+
         <button type="submit" class="btn btn-primary">Submit</button>
       </form>
   
@@ -100,7 +83,7 @@
     data() {
       return {
         roles: [],
-        roleIndex: 0,
+        roleIndex: -1,
         submitted: false,
         formData: {
           title: '',
@@ -125,7 +108,6 @@
             .then(response => {
                 this.roles = response.data;
                 console.log('Roles:', this.roles);
-                this.formData.title = this.roles[this.roleIndex].Role_Name
             })
             .catch(error => {
                 console.log('Error fetching roles: ', error);
@@ -142,10 +124,9 @@
             }
   
             // Form Validation
-            this.formErrors.title = validateEmpty(this.formData.title)
+            this.formErrors.title = this.roleIndex == -1 ? "Please select a role" : ""
             this.formErrors.opening = validateEmpty(this.formData.opening) || validatePositive(this.formData.opening)
             this.formErrors.personOfContact = validateEmpty(this.formData.personOfContact)
-            this.formErrors.description = validateEmpty(this.formData.description)
             // this.formErrors.salary = validateSalary(this.formData.salary)
             
             // Check if there are any errors
@@ -189,24 +170,17 @@
         selectRole(value) {
             this.roleIndex = value
             this.formData.title = this.roles[this.roleIndex].Role_Name
-            this.showDropdown = false
-        },
-        // Add the selected role and populate other fields
-        addRole() {
-            if (this.roleQuery == '') return
-            console.log(this.roles[this.roleIndex].Skills)
             this.formData.skills = this.roles[this.roleIndex].Skills
             this.formData.description = this.roles[this.roleIndex].Description
-        },
-        // Remove skills from skills needed field
-        removeSkill(skill) {
-            this.formData.skills = this.formData.skills.filter(s => s != skill)
+            this.showDropdown = false
         },
         // Reset job creation form
         resetForm() {
+            this.roleIndex = -1
             this.formData = {
               title: '',
               skills: [],
+              opening: 1,
               personOfContact: 'Jane',  
               description: '',
               //salary: '',
