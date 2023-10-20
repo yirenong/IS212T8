@@ -43,7 +43,7 @@
       </div>
 
       <!-- Department Field -->
-      <div class="form-group row mb-3">
+      <!-- <div class="form-group row mb-3">
         <label for="department" class="col-sm-2 col-form-label">Department</label>
         <div class="col-sm-10">
           <input v-model="formData.department" class="form-control" id="department" placeholder="Department">
@@ -51,10 +51,10 @@
       </div>
       <div class="alert alert-danger" v-if="formErrors.department" role="alert">
           {{ formErrors.department }}
-      </div>
+      </div> -->
 
       <!-- Salary Field -->
-      <div class="form-group row mb-3">
+      <!-- <div class="form-group row mb-3">
         <label for="salary" class="col-sm-2 col-form-label">Salary</label>
         <div class="col-sm-10">
           <input v-model="formData.salary" type="number" class="form-control" id="salary" placeholder="Salary">
@@ -62,10 +62,10 @@
       </div>
       <div class="alert alert-danger" v-if="formErrors.salary" role="alert">
           {{ formErrors.salary }}
-      </div>
+      </div> -->
 
       <!-- Person of Contact Field -->
-      <div class="form-group row mb-3">
+      <!-- <div class="form-group row mb-3">
         <label for="personOfContact" class="col-sm-2 col-form-label">Person Of Contact</label>
         <div class="col-sm-10">
           <input v-model="formData.personOfContact" class="form-control" id="personOfContact" placeholder="Person Of Contact">
@@ -73,7 +73,7 @@
       </div>
       <div class="alert alert-danger" v-if="formErrors.personOfContact" role="alert">
           {{ formErrors.personOfContact }}
-      </div>
+      </div> -->
 
       <!-- Description Field -->
       <div class="form-group mb-5">
@@ -85,7 +85,7 @@
     </form>
 
     <div v-if="submitted">
-      <h2>Role Created Successfully!</h2>
+      <div class="alert alert-success" role="alert">Role created successfully!</div>
       <p>Title: {{ formData.title }}</p>
       <p>Skills Needed: {{ formData.skills }}</p>
       <p>Department: {{ formData.department }}</p>
@@ -105,9 +105,9 @@ export default {
       formData: {
         title: '',
         skills: [],
-        department: '',
-        salary: '',
-        personOfContact: '',  
+        // department: '',
+        // // salary: '',
+        // personOfContact: 'Jane',  
         description: '',
       },
       submitted: false,
@@ -128,22 +128,22 @@ export default {
           // Reset form errors
           this.formErrors = {
               title: '',
-              department: '',
-              salary: '',
-              personOfContact: '',
+              // department: '',
+              // // salary: '',
+              // personOfContact: '',
               description: ''
           }
 
           // Form Validation
           this.formErrors.title = validateEmpty(this.formData.title)
           this.formErrors.department = validateEmpty(this.formData.department)
-          this.formErrors.salary = validateSalary(this.formData.salary)
+          // this.formErrors.salary = validateSalary(this.formData.salary)
           this.formErrors.personOfContact = validateEmpty(this.formData.personOfContact)
           
           // Check if there are any errors
           if (this.formErrors.title ||
               this.formErrors.department ||
-              this.formErrors.salary ||
+              // this.formErrors.salary ||
               this.formErrors.personOfContact
           ) {
               return
@@ -190,9 +190,9 @@ function validateEmpty(value) {
   return ""
 } 
 
-function validateSalary(value) {
-  return validateEmpty(value) || ((value < 0) ? "Salary cannot be negative" : "")
-}
+// function validateSalary(value) {
+//   return validateEmpty(value) || ((value < 0) ? "Salary cannot be negative" : "")
+// }
 
 </script>
 
