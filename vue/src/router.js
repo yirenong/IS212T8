@@ -24,6 +24,11 @@ const routes = [
     meta: { allowedRoles: ['HR'] },
   },
   {
+    path: '/hr/job-listing/:id',
+    component: () => import('./components/JobListingView.vue'),
+    meta: { allowedRoles: ['HR'] },
+  },
+  {
     path: '/hr/job-listing/edit/:id',
     name: 'editJobListing',
     component: () => import('./components/JobListingEditIdv.vue'),
