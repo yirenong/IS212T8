@@ -3,6 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 from sqlalchemy.orm import relationship
 from sqlalchemy import func
+from datetime import datetime
 
 app = Flask(__name__)
 #app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root:@localhost:3308/is212'
@@ -15,7 +16,6 @@ cors = CORS(app, resources={r"/api/*": {"origins": "http://localhost:8080"}})
 
 ##################################################################################################################
 ### Get All Job Listings (Story #1) ###
-
 
 class JobListing(db.Model):
     __tablename__ = 'Job_Listing'
@@ -202,6 +202,20 @@ def get_staff_skill():
 ##################################################################################################################
 ### Maintain Job Listing (Story #2) ###
 
+# Create new job listing
+@app.route('/api/job_list/new', methods=['POST'])
+def new_job_listing():
+    data = request.get_json()
+    print(data)
+    job_listing = JobListing(Listing_ID = JobListing.query.count() + 1,
+                            Role_ID=data.get('Role_ID'),
+                            Opening=data.get('Opening'),
+                            Date_posted=datetime.strptime(data.get('Date_posted'), '%Y-%m-%d'))
+
+    db.session.add(job_listing)
+    db.session.commit()
+
+    return jsonify(job_listing.to_dict()), 200
 
 @app.route('/api/roles', methods=['GET'])
 def get_all_roles():

@@ -1,6 +1,6 @@
 <template>
     <div class="p-3">
-      <form v-if="!submitted" @submit.prevent="submitForm">
+      <form v-if="!submitted" @submit.prevent="createJobListing">
         <!-- Title Field -->
         <div class="title-field mb-3">
           <label for="title" class="col-sm-2 col-form-label">Title</label>
@@ -88,7 +88,7 @@
         <p>Description: {{ formData.description }}</p>
         <p>Date Created: {{ formData.date_created }}</p>
         <!-- <p>Salary: {{ formData.salary }}</p> -->
-        <button @click="restart" class="btn btn-primary">Create New Job Listing</button>
+        <button @click="resetForm" class="btn btn-primary">Create New Job Listing</button>
       </div>
     </div>
   </template>
@@ -121,7 +121,7 @@
       };
     },
     created() {
-        axios.get('http://localhost:5000/api/role_list')
+        axios.get('http://localhost:5000/api/roles')
             .then(response => {
                 this.roles = response.data;
                 console.log('Roles:', this.roles);
@@ -132,7 +132,7 @@
             })
     },
     methods: {
-        submitForm() {
+        createJobListing() {
             // Reset form errors
             this.formErrors = {
                 title: '',
@@ -162,9 +162,22 @@
             const currentDate = new Date().toJSON().slice(0,10);
             this.formData.date_created = currentDate;
 
-            // Add or Return form data
-  
-            this.submitted = true;
+            const newJob = {
+                Role_ID: this.roles[this.roleIndex].Role_ID,
+                Opening: this.formData.opening,
+                Date_posted: this.formData.date_created
+            }
+
+            // Add new job listing to db
+            axios.post(`http://localhost:5000/api/job_list/new`, newJob)
+            .then(response => {
+                console.log('Job Listing created successfully:', response.data);
+                this.submitted = true;
+            })
+            .catch(error => {
+                console.error('Error creating new job listing:', error);
+            });
+
         },
         // Functions for dropdown menu
         toggleDropdown() {
@@ -189,8 +202,8 @@
         removeSkill(skill) {
             this.formData.skills = this.formData.skills.filter(s => s != skill)
         },
-        // Resubmit new job creation form
-        restart() {
+        // Reset job creation form
+        resetForm() {
             this.formData = {
               title: '',
               skills: [],
