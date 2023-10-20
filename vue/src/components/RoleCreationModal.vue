@@ -5,7 +5,7 @@
       <div class="form-group row mb-3">
         <label for="title" class="col-sm-2 col-form-label">Title</label>
         <div class="col-sm-10">
-          <input v-model="formData.title" class="form-control" id="title" placeholder="Title">
+          <input v-model="formData.title" class="form-control" id="title" placeholder="Enter the role name">
         </div>
       </div>
       <div class="alert alert-danger" v-if="formErrors.title" role="alert">
@@ -13,7 +13,7 @@
       </div>
 
       <!-- Skills Field -->
-      <div class="skill-field">
+      <div class="skill-field mb-3">
         <label for="skill" class="col-sm-2 col-form-label">Skill</label>
         <div class="select-container mr-5">
           <input class="custom-select mr-3" id="skill" v-model="skillQuery"
@@ -22,16 +22,18 @@
           >
           <ul class="select-options" v-show="showDropdown">
               <li class="select-option"
-                  v-for="(skill, index) in skillList" 
+                  v-for="(skill, index) in skill_list" 
                   :key="index"
-                  @click="selectSkill(skill)">
-                  {{ skill }}
+                  @click="selectSkill(skill.Skill_Name)">
+                  {{ skill.Skill_Name }}
               </li>
           </ul>
           <button class="btn btn-secondary" @click.prevent="addSkill">Add</button>
           </div>
-          
-          <p>Skills Needed: </p>
+      </div>
+
+      <div>
+        <p>Skills Needed: </p>
           <ul class="list-group list-group-horizontal">
               <li v-for="(skill, index) in formData.skills"
               :key="index" 
@@ -41,46 +43,20 @@
               </li>
           </ul>
       </div>
-
-      <!-- Department Field -->
-      <!-- <div class="form-group row mb-3">
-        <label for="department" class="col-sm-2 col-form-label">Department</label>
-        <div class="col-sm-10">
-          <input v-model="formData.department" class="form-control" id="department" placeholder="Department">
-        </div>
+      <div class="alert alert-danger" v-if="formErrors.skills" role="alert">
+          {{ formErrors.skills }}
       </div>
-      <div class="alert alert-danger" v-if="formErrors.department" role="alert">
-          {{ formErrors.department }}
-      </div> -->
-
-      <!-- Salary Field -->
-      <!-- <div class="form-group row mb-3">
-        <label for="salary" class="col-sm-2 col-form-label">Salary</label>
-        <div class="col-sm-10">
-          <input v-model="formData.salary" type="number" class="form-control" id="salary" placeholder="Salary">
-        </div>
-      </div>
-      <div class="alert alert-danger" v-if="formErrors.salary" role="alert">
-          {{ formErrors.salary }}
-      </div> -->
-
-      <!-- Person of Contact Field -->
-      <!-- <div class="form-group row mb-3">
-        <label for="personOfContact" class="col-sm-2 col-form-label">Person Of Contact</label>
-        <div class="col-sm-10">
-          <input v-model="formData.personOfContact" class="form-control" id="personOfContact" placeholder="Person Of Contact">
-        </div>
-      </div>
-      <div class="alert alert-danger" v-if="formErrors.personOfContact" role="alert">
-          {{ formErrors.personOfContact }}
-      </div> -->
 
       <!-- Description Field -->
       <div class="form-group mb-5">
         <label for="description" class="mb-2">Description</label>
         <textarea v-model="formData.description" class="form-control" id="description" rows="3"></textarea>
       </div>
+      <div class="alert alert-danger" v-if="formErrors.description" role="alert">
+          {{ formErrors.description }}
+      </div>
 
+      <!-- Submit button -->
       <button type="submit" class="btn btn-primary">Submit</button>
     </form>
 
@@ -88,16 +64,14 @@
       <div class="alert alert-success" role="alert">Role created successfully!</div>
       <p>Title: {{ formData.title }}</p>
       <p>Skills Needed: {{ formData.skills }}</p>
-      <p>Department: {{ formData.department }}</p>
-      <p>Salary: {{ formData.salary }}</p>
-      <p>Person of Contact: {{ formData.personOfContact }}</p>
       <p>Description: {{ formData.description }}</p>
-      <button @click="restart" class="btn btn-primary">Create New Role</button>
+      <button @click="resetForm" class="btn btn-primary">Create New Role</button>
     </div>
   </div>
 </template>
 
 <script>
+import axios from 'axios';
 
 export default {
   data() {
@@ -105,24 +79,29 @@ export default {
       formData: {
         title: '',
         skills: [],
-        // department: '',
-        // // salary: '',
-        // personOfContact: 'Jane',  
         description: '',
       },
       submitted: false,
       formErrors: {
           title: '',
-          department: '',
-          salary: '',
-          personOfContact: '',
+          skills: '',
           description: ''
       },
-      skillList: ['HTML', 'CSS', 'JavaScript', 'React', 'Vue'],
+      skill_list: [],
       skillQuery: '',
       showDropdown: false
     };
   },
+  created() {
+        axios.get('http://localhost:5000/api/skill_list')
+            .then(response => {
+                this.skill_list = response.data;
+                console.log('Skill List:', this.skill_list);
+            })
+            .catch(error => {
+                console.log('Error fetching skill list: ', error);
+            })
+    },
   methods: {
       submitForm() {
           // Reset form errors
@@ -136,22 +115,32 @@ export default {
 
           // Form Validation
           this.formErrors.title = validateEmpty(this.formData.title)
-          this.formErrors.department = validateEmpty(this.formData.department)
-          // this.formErrors.salary = validateSalary(this.formData.salary)
-          this.formErrors.personOfContact = validateEmpty(this.formData.personOfContact)
+          this.formErrors.description = validateEmpty(this.formData.description)
+          this.formErrors.skills = this.formData.skills.length == 0 ? "Skill field cannot be empty" : ""
           
           // Check if there are any errors
           if (this.formErrors.title ||
-              this.formErrors.department ||
-              // this.formErrors.salary ||
-              this.formErrors.personOfContact
+              this.formErrors.description ||
+              this.formErrors.skills
           ) {
               return
           }
 
-          // Add or Return form data
+          // Add new role to db
+          const newRole = {
+                Role_Name: this.formData.title,
+                Description: this.formData.description,
+                Skills: this.formData.skills
+          }
 
-          this.submitted = true;
+          axios.post(`http://localhost:5000/api/roles/new`, newRole)
+            .then(response => {
+                console.log('Role created successfully:', response.data);
+                this.submitted = true;
+            })
+            .catch(error => {
+                console.error('Error creating new role:', error);
+            });
       },
       toggleDropdown() {
           this.showDropdown = !this.showDropdown
@@ -171,13 +160,10 @@ export default {
       removeSkill(skill) {
           this.formData.skills = this.formData.skills.filter(s => s != skill)
       },
-      restart() {
+      resetForm() {
           this.formData = {
             title: '',
             skills: [],
-            department: '',
-            salary: '',
-            personOfContact: '',  
             description: '',
           }
           this.submitted = false;
@@ -189,10 +175,6 @@ function validateEmpty(value) {
   if (value == "" || value == null) return "Field cannot be empty."
   return ""
 } 
-
-// function validateSalary(value) {
-//   return validateEmpty(value) || ((value < 0) ? "Salary cannot be negative" : "")
-// }
 
 </script>
 

@@ -26,7 +26,7 @@
         <!-- No of Opening Field -->
         <div class="form-group row mb-3">
           <label for="opening" class="col-sm-2 col-form-label">Number of Opening</label>
-          <div class="col-sm-10">
+          <div class="col-sm-3">
             <input v-model="formData.opening" type="number" class="form-control" id="opening" placeholder="Number of Opening">
           </div>
         </div>
@@ -48,7 +48,7 @@
         <!-- Person of Contact Field -->
         <div class="form-group row my-3">
           <label for="personOfContact" class="col-sm-2 col-form-label">Person Of Contact</label>
-          <div class="col-sm-10">
+          <div class="col-sm-3">
             <input v-model="formData.personOfContact" class="form-control" id="personOfContact" placeholder="Person Of Contact">
           </div>
         </div>
