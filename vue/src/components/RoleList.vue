@@ -6,6 +6,7 @@
         <tr>
           <th>Role Name</th>
           <th>Description</th>
+          <th>Department</th>
           <th>Skills</th>
           <th>Actions</th>
         </tr>
@@ -14,6 +15,7 @@
         <tr v-for="(role, index) in roles" :key="index">
           <td>{{ role.Role_Name }}</td>
           <td>{{ role.Description }}</td>
+          <td>{{ role.Department }}</td>
           <td>
             <ul>
               <li v-for="(skill, skillIndex) in role.Skills" :key="skillIndex">

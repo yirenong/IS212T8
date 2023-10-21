@@ -43,6 +43,10 @@
                 <table class="table table-borderless">
                   <tbody>
                     <tr>
+                      <td><b>Department:</b></td>
+                      <td>{{ job.Role.Department}}</td>
+                    </tr>
+                    <tr>
                       <td><b>Number of Openings:</b></td>
                       <td>{{ job.Opening }}</td>
                     </tr>

@@ -3,10 +3,11 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 from sqlalchemy.orm import relationship
 from sqlalchemy import func
+import requests
 
 app = Flask(__name__)
-#app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root:@localhost:3308/is212'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root:@localhost:3306/is212'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root:@localhost:3308/is212'
+#app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root:@localhost:3306/is212'
 db = SQLAlchemy(app)
 
 # Configure CORS to allow requests from your Vue.js frontend
@@ -30,7 +31,13 @@ class JobListing(db.Model):
     def to_dict(self):
         return {
             'Listing_ID': self.Listing_ID,
-            'Role': self.role.to_dict(),
+            'Role': {
+                'Role_ID': self.role.Role_ID,
+                'Role_Name': self.role.Role_Name,
+                'Description': self.role.Description,
+                'Department': self.role.Department,  # Include the Department field
+                'Skills': [skill.Skill_Name for skill in self.role.skills]
+            },
             'Opening': self.Opening,
             'Date_posted': self.Date_posted.strftime('%Y-%m-%d'),
         }
@@ -41,6 +48,7 @@ class Role(db.Model):
     Role_ID = db.Column(db.Integer, primary_key=True, autoincrement=True)
     Role_Name = db.Column(db.String(64), nullable=False)
     Description = db.Column(db.String(500), nullable=False)
+    Department = db.Column(db.String(50), nullable=False)
 
     skills = relationship('Skill', secondary='Role_Skill')
 
@@ -49,6 +57,7 @@ class Role(db.Model):
             'Role_ID': self.Role_ID,
             'Role_Name': self.Role_Name,
             'Description': self.Description,
+            'Department': self.Department,
             'Skills': [skill.Skill_Name for skill in self.skills]
         }
 
@@ -129,6 +138,15 @@ class Staff(db.Model):
     Country = db.Column(db.String(50), nullable=False)
     Access_Rights = db.Column(db.String(50), nullable=False)
     skills = db.relationship('Staff_Skill', backref='staff')
+
+
+# Inherited Class from staff
+class ExtendedStaff(Staff):
+    Role_ID = db.Column(db.Integer, nullable=False) 
+
+    def __init__(self, Staff_FName, Staff_LName, Email, Password, Dept, Country, Access_Rights, Role_ID):
+        super().__init__(Staff_FName, Staff_LName, Email, Password, Dept, Country, Access_Rights)
+        self.Role_ID = Role_ID
 
 
 @app.route('/api/login', methods=['POST'])
@@ -345,6 +363,7 @@ def update_role(role_id):
     data = request.get_json()
     role_name = data.get('Role_Name')
     description = data.get('Description')
+    department = data.get('Department')
 
     role = Role.query.get(role_id)
 
@@ -353,10 +372,32 @@ def update_role(role_id):
 
     role.Role_Name = role_name
     role.Description = description
+    role.Department = department
 
     db.session.commit()
 
-    return jsonify(role.to_dict()), 200
+    response = requests.put(f'http://localhost:5000/api/staff/update-department/{role_id}/{department}')
+
+    if response.status_code == 200:
+        return jsonify(role.to_dict())
+    else:
+        return jsonify({'message': 'Failed to update staff department'}), 500
+
+@app.route('/api/staff/update-department/<int:role_id>/<new_department>', methods=['PUT'])
+def update_staff_department(role_id, new_department):
+    # Find all staff members with the specified role ID
+    staff_to_update = ExtendedStaff.query.filter(ExtendedStaff.Role_ID == role_id).all()
+
+    if not staff_to_update:
+        return jsonify({'message': 'No staff members found with the specified role ID'}), 404
+
+    for staff in staff_to_update:
+        staff.Dept = new_department
+
+    db.session.commit()
+
+    return jsonify({'message': 'Department updated for staff members with role ID {}'.format(role_id)}), 200
+
 
 
 @app.route('/api/job_list/<int:listing_id>', methods=['PUT'])

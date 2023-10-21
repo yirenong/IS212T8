@@ -11,6 +11,10 @@
         <input class="form-control" id="form-control" v-model="role.Description" required type="textarea">
       </div>
       <div class="mb-3">
+        <label for="Description" class="form-label"><h5>Department:</h5></label>
+        <input class="form-control" id="form-control" v-model="role.Department" required type="textarea">
+      </div>
+      <div class="mb-3">
           <label for="Skills" class="form-label"><h5>Skills:</h5></label> <br>
           <label for="Skills" class="form-label">Current Skills:</label> <br>
           <span v-for="skill in role.Skills" :key="skill.Skill_ID" class="badge bg-secondary">{{ skill }}</span>
@@ -38,6 +42,7 @@ export default {
       role: {
         Role_Name: '',
         Description: '',
+        Department: '',
         Skills: []
       },
       skills: [],
@@ -79,7 +84,7 @@ export default {
       return this.role.Skills.some(skill => skill === skillName);
     },
     updateRole() {
-      if (!this.role.Role_Name || !this.role.Description) {
+      if (!this.role.Role_Name || !this.role.Description || !this.role.Department) {
         window.alert('Please fill in all fields.');
         return;
       }
@@ -87,6 +92,7 @@ export default {
       const updatedRole = {
         Role_Name: this.role.Role_Name,
         Description: this.role.Description,
+        Department: this.role.Department,
       };
 
       axios.put(`http://localhost:5000/api/roles/${this.role.Role_ID}`, updatedRole)

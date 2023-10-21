@@ -6,6 +6,7 @@
         <tr>
           <th>Job Role</th>
           <th>Job Description</th>
+          <th>Department</th>
           <th>Number of Openings</th>
           <th>Date</th>
           <th>Skills</th>
@@ -16,6 +17,7 @@
         <tr v-for="(job, index) in jobListings" :key="index">
           <td>{{ job.Role.Role_Name }}</td>
           <td>{{ job.Role.Description }}</td>
+          <td>{{ job.Role.Department }}</td>
           <td>{{ job.Opening }}</td>
           <td>{{ job.Date_posted }}</td>
           <td>
