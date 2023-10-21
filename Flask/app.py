@@ -19,7 +19,7 @@ cors = CORS(app, resources={r"/api/*": {"origins": "http://localhost:8080"}})
 
 class JobListing(db.Model):
     __tablename__ = 'Job_Listing'
-    Listing_ID = db.Column(db.Integer, primary_key=True)
+    Listing_ID = db.Column(db.Integer, primary_key=True, autoincrement=True)
     Role_ID = db.Column(db.Integer, db.ForeignKey(
         'Role.Role_ID'), nullable=False)
     Opening = db.Column(db.Integer)
@@ -38,7 +38,7 @@ class JobListing(db.Model):
 
 class Role(db.Model):
     __tablename__ = 'Role'
-    Role_ID = db.Column(db.Integer, primary_key=True)
+    Role_ID = db.Column(db.Integer, primary_key=True, autoincrement=True)
     Role_Name = db.Column(db.String(64), nullable=False)
     Description = db.Column(db.String(500), nullable=False)
 
@@ -68,6 +68,51 @@ def get_job_listings():
     job_listings = [listing.to_dict() for listing in job_listings_data]
 
     return jsonify(job_listings)
+
+## New code
+@app.route('/api/job_list/<int:listing_id>', methods=['GET'])
+def get_job_listing_by_id(listing_id):
+    job_listing = JobListing.query.get(listing_id)
+
+    if job_listing is not None:
+        return jsonify(job_listing.to_dict())
+    else:
+        return jsonify({"error": "Job listing not found"}, 404)
+
+class Application(db.Model):
+    __tablename__ = 'application'
+    Application_ID = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    Staff_ID = db.Column(db.Integer, nullable=False)
+    Role_ID = db.Column(db.Integer, nullable=False)
+    Date = db.Column(db.String, nullable=False)
+    Status = db.Column(db.String, nullable=False)
+
+@app.route('/api/job_listing/<int:Staff_ID>/applications', methods=['GET'])
+def get_applications(Staff_ID):
+    applications = Application.query.filter_by(Staff_ID=Staff_ID).all()
+    application_data = [application.Role_ID for application in applications]
+
+    return jsonify(application_data)
+
+@app.route('/api/job_listing/apply', methods=['POST'])
+def apply():
+    data = request.get_json()
+    
+    staff_id = data.get('Staff_ID')
+    role_id = data.get('Role_ID')
+    date = data.get('Date')
+    status = data.get('Status')
+
+    if staff_id is None or role_id is None or date is None or status is None:
+        return jsonify({'error': 'Missing required fields'}), 400
+
+    new_application = Application(Staff_ID=staff_id, Role_ID=role_id, Date=date, Status=status)
+
+    db.session.add(new_application)
+    db.session.commit()
+
+    return jsonify({'message': 'Application submitted successfully'}), 201
+
 
 #########################################################################################################################
 ### Login ###
@@ -224,7 +269,45 @@ def get_staff_skill():
 
 ##################################################################################################################
 ### Maintain Job Listing (Story #2) ###
+# Create new job listing
+@app.route('/api/job_list/new', methods=['POST'])
+def new_job_listing():
+    data = request.get_json()
+    job_listing = JobListing(Listing_ID = JobListing.query.count() + 1,
+                            Role_ID=data.get('Role_ID'),
+                            Opening=data.get('Opening'),
+                            Date_posted=datetime.strptime(data.get('Date_posted'), '%Y-%m-%d'))
 
+    db.session.add(job_listing)
+    db.session.commit()
+    return jsonify(job_listing.to_dict()), 200
+
+# Create new role
+@app.route('/api/roles/new', methods=['POST'])
+def new_role():
+    data = request.get_json()
+    new_role = Role(Role_ID = Role.query.count() + 1,
+                    Role_Name=data.get('Role_Name'),
+                    Description=data.get('Description'))
+    db.session.add(new_role)
+    
+    for skillName in data.get('Skills'):
+        skill = Skill.query.filter_by(Skill_Name=skillName).first()
+        
+        if not skill:
+            # Create a new skill if it doesn't exist
+            new_skill = Skill(Skill_Name=skillName)
+            db.session.add(new_skill)
+            db.session.commit()
+            
+            skill = Skill.query.filter_by(Skill_Name=skillName).first()
+        
+        new_role_skill = RoleSkill(Role_ID=new_role.Role_ID, Skill_ID=skill.Skill_ID)
+        db.session.add(new_role_skill)
+    
+    db.session.commit()
+
+    return jsonify(new_role.to_dict()), 200
 
 @app.route('/api/roles', methods=['GET'])
 def get_all_roles():
@@ -240,6 +323,21 @@ def get_role_by_id(role_id):
 
     role_data = role.to_dict()
     return jsonify(role_data), 200
+
+@app.route('/api/job_listing/<int:listing_id>/decrement_opening', methods=['PUT'])
+def decrement_opening(listing_id):
+    job_listing = JobListing.query.get(listing_id)
+
+    if job_listing is None:
+        return jsonify({'message': 'Job listing not found'}), 404
+
+    if job_listing.Opening > 0:
+        job_listing.Opening -= 1
+        db.session.commit()
+        return jsonify({'message': 'Opening decremented by 1'}), 200
+    else:
+        return jsonify({'message': 'No more openings available'}), 400
+
 
 
 @app.route('/api/roles/<int:role_id>', methods=['PUT'])

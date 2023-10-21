@@ -10,6 +10,12 @@ const routes = [
     meta: { allowedRoles: ['Staff'] },
   },
   {
+    path: 'staff/job-listing/apply/:id',
+    name: 'applyJob',
+    component: () => import('./components/ApplyJob.vue'),
+    meta: { allowedRoles: ['Staff'] },
+  },
+  {
     path: '/',
     component: () => import('./components/LoginPage.vue'),
   },
@@ -43,6 +49,12 @@ const routes = [
   },
   {
     path: '/hr/job-creation', 
+    name: 'rolecreation',
+    component: () => import('./components/RoleCreationModal.vue'),
+    meta: { allowedRoles: ['HR'] },
+  },
+  {
+    path: '/hr/role-creation', 
     name: 'rolecreation',
     component: () => import('./components/RoleCreationModal.vue'),
     meta: { allowedRoles: ['HR'] },
