@@ -53,7 +53,7 @@ export default {
     };
   },
   created() {
-    const roleId = parseInt(this.$route.params.id, 5);
+    const roleId = parseInt(this.$route.params.id, 10);
     console.log("roleID:", roleId);
     axios.get(`http://localhost:5000/api/roles/${roleId}`)
     .then(response => {

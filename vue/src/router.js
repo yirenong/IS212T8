@@ -63,6 +63,12 @@ const routes = [
     name: 'rolecreation',
     component: () => import('./components/RoleCreationModal.vue'),
     meta: { allowedRoles: ['HR'] },
+  },
+  {
+    path: '/hr/skills-creation',
+    name: 'skillscreation',
+    component: () => import('./components/SkillCreation.vue'),
+    meta: { allowedRoles: ['HR'] },
   }
   
 ];

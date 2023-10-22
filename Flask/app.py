@@ -209,6 +209,19 @@ class Staff_Skill(db.Model):
             'Skill_ID': self.Skill_ID
         }
 
+@app.route('/api/skill' , methods=['POST'])
+def add_skill():
+    data = request.get_json()
+    skill_name = data.get('Skill_Name')
+
+    if not skill_name:
+        return jsonify({'message': 'Skill name is required'}), 400
+
+    new_skill = Skill(Skill_Name=skill_name)
+    db.session.add(new_skill)
+    db.session.commit()
+
+    return jsonify({'message': 'Skill added successfully'}), 201
 
 @app.route('/api/search_staff_by_skill', methods=['POST'])
 def search_staff_by_skill():
