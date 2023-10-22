@@ -1,3 +1,4 @@
+from datetime import datetime
 from flask import Flask, jsonify, request
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
@@ -163,7 +164,8 @@ def login():
                 'Staff_ID': user.Staff_ID,
                 'Staff_FName': user.Staff_FName,
                 'Staff_LName': user.Staff_LName,
-                'Dept': user.Dept
+                'Dept': user.Dept,
+                'Email': user.Email
             }
         if user.Dept == 'HR':
             userData['message'] = 'Management Login'
@@ -306,7 +308,8 @@ def new_role():
     data = request.get_json()
     new_role = Role(Role_ID = Role.query.count() + 1,
                     Role_Name=data.get('Role_Name'),
-                    Description=data.get('Description'))
+                    Description=data.get('Description'),
+                    Department=data.get('Department'))
     db.session.add(new_role)
     
     for skillName in data.get('Skills'):
@@ -342,19 +345,19 @@ def get_role_by_id(role_id):
     role_data = role.to_dict()
     return jsonify(role_data), 200
 
-@app.route('/api/job_listing/<int:listing_id>/decrement_opening', methods=['PUT'])
-def decrement_opening(listing_id):
-    job_listing = JobListing.query.get(listing_id)
+# @app.route('/api/job_listing/<int:listing_id>/decrement_opening', methods=['PUT'])
+# def decrement_opening(listing_id):
+#     job_listing = JobListing.query.get(listing_id)
 
-    if job_listing is None:
-        return jsonify({'message': 'Job listing not found'}), 404
+#     if job_listing is None:
+#         return jsonify({'message': 'Job listing not found'}), 404
 
-    if job_listing.Opening > 0:
-        job_listing.Opening -= 1
-        db.session.commit()
-        return jsonify({'message': 'Opening decremented by 1'}), 200
-    else:
-        return jsonify({'message': 'No more openings available'}), 400
+#     if job_listing.Opening > 0:
+#         job_listing.Opening -= 1
+#         db.session.commit()
+#         return jsonify({'message': 'Opening decremented by 1'}), 200
+#     else:
+#         return jsonify({'message': 'No more openings available'}), 400
 
 
 
