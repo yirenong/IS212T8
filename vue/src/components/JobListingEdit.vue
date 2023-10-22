@@ -6,8 +6,9 @@
         <tr>
           <th>Job Role</th>
           <th>Job Description</th>
-          <th>Department</th>
+          <!-- <th>Department</th> -->
           <th>Number of Openings</th>
+          <th>Number of Applicants</th>
           <th>Date</th>
           <th>Skills</th>
           <th>Actions</th>
@@ -15,10 +16,13 @@
       </thead>
       <tbody>
         <tr v-for="(job, index) in jobListings" :key="index">
-          <td>{{ job.Role.Role_Name }}</td>
+          <td><router-link :to="'/hr/job-listing/' + job.Listing_ID" class="text-primary nav-link">
+            {{ job.Role.Role_Name }}
+          </router-link></td>
           <td>{{ job.Role.Description }}</td>
           <td>{{ job.Role.Department }}</td>
           <td>{{ job.Opening }}</td>
+          <td>0</td>
           <td>{{ job.Date_posted }}</td>
           <td>
             <ul>
