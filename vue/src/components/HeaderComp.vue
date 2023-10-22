@@ -30,6 +30,9 @@
         <li class="nav-item" v-if="isHR">
           <router-link to="/hr/role-creation" class="nav-link">Role Creation</router-link>
         </li>
+        <li class="nav-item" v-if="isHR">
+          <router-link to="/hr/skills-creation" class="nav-link">Skill Creation</router-link>
+        </li>
       </ul>
     </div>
     <div v-if="$session.get('user') != null">
