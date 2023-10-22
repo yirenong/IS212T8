@@ -80,7 +80,7 @@ export default {
         };
     },
     created(){
-        const id = parseInt(this.$route.params.id, 5);
+        const id = parseInt(this.$route.params.id, 10);
         console.log("id: ", id);
         if (this.$session.get('user') == null) {
             this.$router.push('/login');

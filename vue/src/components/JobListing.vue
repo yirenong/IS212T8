@@ -95,7 +95,7 @@
               </div>
               <hr>
               <div class="m-2">
-                <button class="btn btn-success" @click="apply(job.Role.Role_ID)" :disabled="isRoleAlreadyApplied(job.Role.Role_ID)">
+                <button class="btn btn-success" @click="apply(job.Listing_ID)" :disabled="isRoleAlreadyApplied(job.Listing_ID)">
                   Apply
                 </button>
               </div>
