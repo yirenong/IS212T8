@@ -1,11 +1,20 @@
 <template>
-  <div class="p-3">
+  <div class="container p-3">
+    <h4>Role Creation</h4>
+    <hr>
     <form v-if="!submitted" @submit.prevent="submitForm">
       <!-- Title Field -->
       <div class="form-group row mb-3">
         <label for="title" class="col-sm-2 col-form-label">Title</label>
         <div class="col-sm-10">
           <input v-model="formData.title" class="form-control" id="title" placeholder="Enter the role name">
+        </div>
+      </div>
+      <!-- Department Field-->
+      <div class="form-group row mb-3">
+        <label for="title" class="col-sm-2 col-form-label">Department</label>
+        <div class="col-sm-10">
+          <input v-model="formData.department" class="form-control" id="title" placeholder="Enter the department name">
         </div>
       </div>
       <div class="alert alert-danger" v-if="formErrors.title" role="alert">
@@ -80,6 +89,7 @@ export default {
         title: '',
         skills: [],
         description: '',
+        department: '',
       },
       submitted: false,
       formErrors: {
@@ -130,7 +140,8 @@ export default {
           const newRole = {
                 Role_Name: this.formData.title,
                 Description: this.formData.description,
-                Skills: this.formData.skills
+                Skills: this.formData.skills,
+                Department: this.formData.department,
           }
 
           axios.post(`http://localhost:5000/api/roles/new`, newRole)

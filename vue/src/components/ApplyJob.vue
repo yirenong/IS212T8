@@ -114,13 +114,13 @@ export default {
                       Role Applied: ${ this.job.Role.Role_Name }
                       Date of Application: ${ this.application.Date }
                 `);
-                axios.put(`http://localhost:5000/api/job_listing/${this.job.Listing_ID}/decrement_opening`)
-                .then(response => {
-                  console.log('Opening decremented successfully:', response.data);
-                })
-                .catch(error => {
-                  console.error('Error decrementing opening:', error);
-                });
+                // axios.put(`http://localhost:5000/api/job_listing/${this.job.Listing_ID}/decrement_opening`)
+                // .then(response => {
+                //   console.log('Opening decremented successfully:', response.data);
+                // })
+                // .catch(error => {
+                //   console.error('Error decrementing opening:', error);
+                // });
                 console.log('Application submitted successfully:', response.data);
             })
             .catch(error => {

@@ -1,12 +1,14 @@
+from datetime import datetime
 from flask import Flask, jsonify, request
 from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 from sqlalchemy.orm import relationship
 from sqlalchemy import func
+import requests
 
 app = Flask(__name__)
-#app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root:@localhost:3308/is212'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root:@localhost:3306/is212'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root:@localhost:3308/is212'
+#app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root:@localhost:3306/is212'
 db = SQLAlchemy(app)
 
 # Configure CORS to allow requests from your Vue.js frontend
@@ -30,7 +32,13 @@ class JobListing(db.Model):
     def to_dict(self):
         return {
             'Listing_ID': self.Listing_ID,
-            'Role': self.role.to_dict(),
+            'Role': {
+                'Role_ID': self.role.Role_ID,
+                'Role_Name': self.role.Role_Name,
+                'Description': self.role.Description,
+                'Department': self.role.Department,  # Include the Department field
+                'Skills': [skill.Skill_Name for skill in self.role.skills]
+            },
             'Opening': self.Opening,
             'Date_posted': self.Date_posted.strftime('%Y-%m-%d'),
         }
@@ -41,6 +49,7 @@ class Role(db.Model):
     Role_ID = db.Column(db.Integer, primary_key=True, autoincrement=True)
     Role_Name = db.Column(db.String(64), nullable=False)
     Description = db.Column(db.String(500), nullable=False)
+    Department = db.Column(db.String(50), nullable=False)
 
     skills = relationship('Skill', secondary='Role_Skill')
 
@@ -49,6 +58,7 @@ class Role(db.Model):
             'Role_ID': self.Role_ID,
             'Role_Name': self.Role_Name,
             'Description': self.Description,
+            'Department': self.Department,
             'Skills': [skill.Skill_Name for skill in self.skills]
         }
 
@@ -131,6 +141,15 @@ class Staff(db.Model):
     skills = db.relationship('Staff_Skill', backref='staff')
 
 
+# Inherited Class from staff
+class ExtendedStaff(Staff):
+    Role_ID = db.Column(db.Integer, nullable=False) 
+
+    def __init__(self, Staff_FName, Staff_LName, Email, Password, Dept, Country, Access_Rights, Role_ID):
+        super().__init__(Staff_FName, Staff_LName, Email, Password, Dept, Country, Access_Rights)
+        self.Role_ID = Role_ID
+
+
 @app.route('/api/login', methods=['POST'])
 def login():
     data = request.get_json()
@@ -145,7 +164,8 @@ def login():
                 'Staff_ID': user.Staff_ID,
                 'Staff_FName': user.Staff_FName,
                 'Staff_LName': user.Staff_LName,
-                'Dept': user.Dept
+                'Dept': user.Dept,
+                'Email': user.Email
             }
         if user.Dept == 'HR':
             userData['message'] = 'Management Login'
@@ -288,7 +308,8 @@ def new_role():
     data = request.get_json()
     new_role = Role(Role_ID = Role.query.count() + 1,
                     Role_Name=data.get('Role_Name'),
-                    Description=data.get('Description'))
+                    Description=data.get('Description'),
+                    Department=data.get('Department'))
     db.session.add(new_role)
     
     for skillName in data.get('Skills'):
@@ -324,19 +345,19 @@ def get_role_by_id(role_id):
     role_data = role.to_dict()
     return jsonify(role_data), 200
 
-@app.route('/api/job_listing/<int:listing_id>/decrement_opening', methods=['PUT'])
-def decrement_opening(listing_id):
-    job_listing = JobListing.query.get(listing_id)
+# @app.route('/api/job_listing/<int:listing_id>/decrement_opening', methods=['PUT'])
+# def decrement_opening(listing_id):
+#     job_listing = JobListing.query.get(listing_id)
 
-    if job_listing is None:
-        return jsonify({'message': 'Job listing not found'}), 404
+#     if job_listing is None:
+#         return jsonify({'message': 'Job listing not found'}), 404
 
-    if job_listing.Opening > 0:
-        job_listing.Opening -= 1
-        db.session.commit()
-        return jsonify({'message': 'Opening decremented by 1'}), 200
-    else:
-        return jsonify({'message': 'No more openings available'}), 400
+#     if job_listing.Opening > 0:
+#         job_listing.Opening -= 1
+#         db.session.commit()
+#         return jsonify({'message': 'Opening decremented by 1'}), 200
+#     else:
+#         return jsonify({'message': 'No more openings available'}), 400
 
 
 
@@ -345,6 +366,7 @@ def update_role(role_id):
     data = request.get_json()
     role_name = data.get('Role_Name')
     description = data.get('Description')
+    department = data.get('Department')
 
     role = Role.query.get(role_id)
 
@@ -353,10 +375,32 @@ def update_role(role_id):
 
     role.Role_Name = role_name
     role.Description = description
+    role.Department = department
 
     db.session.commit()
 
-    return jsonify(role.to_dict()), 200
+    response = requests.put(f'http://localhost:5000/api/staff/update-department/{role_id}/{department}')
+
+    if response.status_code == 200:
+        return jsonify(role.to_dict())
+    else:
+        return jsonify({'message': 'Failed to update staff department'}), 500
+
+@app.route('/api/staff/update-department/<int:role_id>/<new_department>', methods=['PUT'])
+def update_staff_department(role_id, new_department):
+    # Find all staff members with the specified role ID
+    staff_to_update = ExtendedStaff.query.filter(ExtendedStaff.Role_ID == role_id).all()
+
+    if not staff_to_update:
+        return jsonify({'message': 'No staff members found with the specified role ID'}), 404
+
+    for staff in staff_to_update:
+        staff.Dept = new_department
+
+    db.session.commit()
+
+    return jsonify({'message': 'Department updated for staff members with role ID {}'.format(role_id)}), 200
+
 
 
 @app.route('/api/job_list/<int:listing_id>', methods=['PUT'])

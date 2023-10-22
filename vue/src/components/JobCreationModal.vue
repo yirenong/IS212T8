@@ -1,5 +1,7 @@
 <template>
-    <div class="p-3">
+    <div class="container p-3">
+      <h4>Job Creation</h4>
+      <hr>
       <form v-if="!submitted" @submit.prevent="createJobListing">
         <!-- Title Field -->
         <div class="title-field mb-3">
@@ -49,13 +51,18 @@
         <div class="form-group row my-3">
           <label for="personOfContact" class="col-sm-2 col-form-label">Person Of Contact</label>
           <div class="col-sm-3">
-            <input v-model="formData.personOfContact" class="form-control" id="personOfContact" placeholder="Person Of Contact">
+            <input v-model="user.Staff_FName" class="form-control" id="personOfContact" placeholder="Person Of Contact">
+          </div>
+        </div>
+        <div class="form-group row my-3">
+          <label for="personOfContact" class="col-sm-2 col-form-label">Contact Email</label>
+          <div class="col-sm-3">
+            <input v-model="user.Email" class="form-control" id="personOfContact" placeholder="Person Of Contact">
           </div>
         </div>
         <div class="alert alert-danger" v-if="formErrors.personOfContact" role="alert">
             {{ formErrors.personOfContact }}
         </div>
-
         <p>Skills Needed: {{ formData.skills }}</p>
         <p>Description: {{ formData.description }}</p>
 
@@ -94,6 +101,7 @@
           date_created: ''
           // salary: ''
         },
+        user: null,
         formErrors: {
             title: '',
             personOfContact: '',
@@ -104,6 +112,7 @@
       };
     },
     created() {
+        this.getuser();
         axios.get('http://localhost:5000/api/roles')
             .then(response => {
                 this.roles = response.data;
@@ -114,6 +123,10 @@
             })
     },
     methods: {
+        getuser(){
+            this.user = this.$session.get('user');
+            console.log('User Data:', this.user);
+        },
         createJobListing() {
             // Reset form errors
             this.formErrors = {
