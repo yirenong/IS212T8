@@ -63,6 +63,9 @@
         <div class="alert alert-danger" v-if="formErrors.personOfContact" role="alert">
             {{ formErrors.personOfContact }}
         </div>
+
+        <!-- Autofilled section -->
+        <p>Department: {{ formData.department }}</p>
         <p>Skills Needed: {{ formData.skills }}</p>
         <p>Description: {{ formData.description }}</p>
 
@@ -98,6 +101,7 @@
           skills: [],
           personOfContact: 'Jane',  
           description: '',
+          department: '',
           date_created: ''
           // salary: ''
         },
@@ -185,6 +189,7 @@
             this.formData.title = this.roles[this.roleIndex].Role_Name
             this.formData.skills = this.roles[this.roleIndex].Skills
             this.formData.description = this.roles[this.roleIndex].Description
+            this.formData.department = this.roles[this.roleIndex].Department
             this.showDropdown = false
         },
         // Reset job creation form

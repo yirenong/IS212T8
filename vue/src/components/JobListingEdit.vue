@@ -6,7 +6,7 @@
         <tr>
           <th>Job Role</th>
           <th>Job Description</th>
-          <!-- <th>Department</th> -->
+          <th>Department</th>
           <th>Number of Openings</th>
           <th>Number of Applicants</th>
           <th>Date</th>
