@@ -37,7 +37,6 @@ export default {
   data() {
     return {
         jobListing: null,
-        jobListings: [],
         applicants: [
           {
             name: "Candidate 1",
@@ -59,19 +58,14 @@ export default {
     };
   },
   created() {
-    axios.get('http://localhost:5000/api/job_list')
+    axios.get(`http://localhost:5000/api/job_list/${this.$route.params.id}`)
       .then(response => {
-        this.jobListings = response.data;
-        console.log('Job Listings:', this.jobListings);
-        this.jobListing = this.jobListings.find(job => job.Listing_ID == this.$route.params.id)
+        this.jobListing = response.data;
+        console.log('Job Listing:', this.jobListing);
       })
       .catch(error => {
         console.error('Error fetching job listings:', error);
       });
-  },
-  beforeRouteUpdate(to, from, next) {
-      this.jobListing = this.jobListings.find(job => job.Listing_ID == to.params.id)
-      next()
   },
   methods: {
       match(skill) {

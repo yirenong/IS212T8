@@ -10,15 +10,19 @@
           <input v-model="formData.title" class="form-control" id="title" placeholder="Enter the role name">
         </div>
       </div>
-      <!-- Department Field-->
-      <div class="form-group row mb-3">
-        <label for="title" class="col-sm-2 col-form-label">Department</label>
-        <div class="col-sm-10">
-          <input v-model="formData.department" class="form-control" id="title" placeholder="Enter the department name">
-        </div>
-      </div>
       <div class="alert alert-danger" v-if="formErrors.title" role="alert">
           {{ formErrors.title }}
+      </div>
+
+      <!-- Department Field-->
+      <div class="form-group row mb-3">
+        <label for="department" class="col-sm-2 col-form-label">Department</label>
+        <div class="col-sm-10">
+          <input v-model="formData.department" class="form-control" id="department" placeholder="Enter the department name">
+        </div>
+      </div>
+      <div class="alert alert-danger" v-if="formErrors.department" role="alert">
+          {{ formErrors.department }}
       </div>
 
       <!-- Skills Field -->
@@ -72,6 +76,7 @@
     <div v-if="submitted">
       <div class="alert alert-success" role="alert">Role created successfully!</div>
       <p>Title: {{ formData.title }}</p>
+      <p>Title: {{ formData.department }}</p>
       <p>Skills Needed: {{ formData.skills }}</p>
       <p>Description: {{ formData.description }}</p>
       <button @click="resetForm" class="btn btn-primary">Create New Role</button>
@@ -95,7 +100,8 @@ export default {
       formErrors: {
           title: '',
           skills: '',
-          description: ''
+          description: '',
+          department: ''
       },
       skill_list: [],
       skillQuery: '',
@@ -126,12 +132,14 @@ export default {
           // Form Validation
           this.formErrors.title = validateEmpty(this.formData.title)
           this.formErrors.description = validateEmpty(this.formData.description)
+          this.formErrors.department = validateEmpty(this.formData.department)
           this.formErrors.skills = this.formData.skills.length == 0 ? "Skill field cannot be empty" : ""
           
           // Check if there are any errors
           if (this.formErrors.title ||
               this.formErrors.description ||
-              this.formErrors.skills
+              this.formErrors.department ||
+              this.formErrors.skills 
           ) {
               return
           }
