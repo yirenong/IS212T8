@@ -16,6 +16,12 @@ const routes = [
     meta: { allowedRoles: ['Staff'] },
   },
   {
+    path: '/staff/profile',
+    component: () => import('./components/StaffProfile.vue'),
+    name: 'staffProfile',
+    meta: { allowedRoles: ['Staff'] },
+  },
+  {
     path: '/',
     component: () => import('./components/LoginPage.vue'),
   },

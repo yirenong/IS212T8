@@ -145,9 +145,32 @@ class Staff(db.Model):
 class ExtendedStaff(Staff):
     Role_ID = db.Column(db.Integer, nullable=False) 
 
-    def __init__(self, Staff_FName, Staff_LName, Email, Password, Dept, Country, Access_Rights, Role_ID):
-        super().__init__(Staff_FName, Staff_LName, Email, Password, Dept, Country, Access_Rights)
+    def __init__(self, Staff_ID, Staff_FName, Staff_LName, Email, Password, Dept, Country, Access_Rights, skills, Role_ID):
+        super().__init__(Staff_ID, Staff_FName, Staff_LName, Email, Password, Dept, Country, Access_Rights, skills)
         self.Role_ID = Role_ID
+
+@app.route('/api/staff/<int:staff_id>', methods=['GET'])
+def profile(staff_id):
+    staff = ExtendedStaff.query.filter_by(Staff_ID=staff_id).first()
+    if not staff:
+        return jsonify({'message': 'Staff not found'}), 404
+    
+    skills = Staff_Skill.query.filter_by(Staff_ID=staff_id).all()
+    skill_names = [Skill.query.get(skill.Skill_ID).Skill_Name for skill in skills]
+
+    staff_data = {
+        'Staff_ID': staff.Staff_ID,
+        'Staff_FName': staff.Staff_FName,
+        'Staff_LName': staff.Staff_LName,
+        'Email': staff.Email,
+        'Dept': staff.Dept,
+        'Country': staff.Country,
+        'Access_Rights': staff.Access_Rights,
+        'Role_ID': staff.Role_ID,
+        'Skills': skill_names
+    }
+
+    return jsonify(staff_data), 200
 
 
 @app.route('/api/login', methods=['POST'])
