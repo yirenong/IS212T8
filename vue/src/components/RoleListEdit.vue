@@ -26,10 +26,11 @@
               {{ skill.Skill_Name }}
             </label><br />
           </div>
+          <button type="button" class="btn btn-primary" @click="check()">Check</button>
         </div>
-      <button type="submit" class="btn btn-primary mb-2">Update</button>
+      <button type="submit" class="btn btn-primary mb-2" @click="updateRole()">Update</button>
     </form>
-    <button type="submit" class="btn btn-secondary mt-4 mb-4" @click="returnToListings" >Return to listings</button>
+    <button type="submit" class="btn btn-secondary mt-4 mb-4" @click="returnToListings()" >Return to listings</button>
   </div>
 </template>
 
@@ -66,14 +67,18 @@ export default {
     });
     this.skills = this.fetchSkills();
     console.log('Role for editing:', this.role);
-    console.log("skills:", this.skills)
+    console.log("selectedSkills:", this.selectedSkills)
     console.log("unselectedSkills:", this.unselectedSkills);
   },
   methods: {
+    check(){
+      console.log("selectedSkills:", this.selectedSkills)
+    },
     fetchSkills() {
       return axios.get('http://localhost:5000/api/skill_list')
         .then(response => {
           this.skills = response.data;
+          console.log("Skills:", this.skills)
           this.unselectedSkills = this.skills.filter(skill => !this.isSkillInRole(skill.Skill_Name));
         })
         .catch(error => {
@@ -95,6 +100,8 @@ export default {
         Department: this.role.Department,
       };
 
+      console.log("updatedRole:", updatedRole);
+      console.log("roleID:", this.role.Role_ID);
       axios.put(`http://localhost:5000/api/roles/${this.role.Role_ID}`, updatedRole)
         .then(response => {
           console.log('Role updated successfully:', response.data);
@@ -104,7 +111,6 @@ export default {
             role_id: this.role.Role_ID,
             skill_ids: this.selectedSkills
           };
-          console.log("roleSkillData:", roleSkillData)
           if (roleSkillData.skill_ids.length !== 0) {
             return axios.post('http://localhost:5000/api/update_role_skills', roleSkillData);
           }

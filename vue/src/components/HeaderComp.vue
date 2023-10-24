@@ -18,6 +18,9 @@
         <li class="nav-item" v-if="!isAuthenticated">
           <router-link to="/" class="nav-link">Login</router-link>
         </li>
+        <li class="nav-item dropdown" v-if="isStaff">
+          <router-link to="/staff/profile" class="nav-link">Profile</router-link>
+        </li>
         <li class="nav-item" v-if="isHR">
           <router-link to="/hr/searchcandidate" class="nav-link">Search Candidates</router-link>
         </li>
