@@ -293,7 +293,7 @@ def update_role_skills():
         return jsonify({'message': 'Role skills updated successfully'}), 201
     except Exception as e:
         db.session.rollback()
-        return jsonify({'message': 'Error updating role skills', 'error': str(e)}), 500
+        return jsonify({'message': 'Error updating role skills', 'error': data}, ), 500
     finally:
         db.session.close()
 
@@ -428,7 +428,7 @@ def update_staff_department(role_id, new_department):
     staff_to_update = ExtendedStaff.query.filter(ExtendedStaff.Role_ID == role_id).all()
 
     if not staff_to_update:
-        return jsonify({'message': 'No staff members found with the specified role ID'}), 404
+        return jsonify({'message': 'No staff members found with the specified role ID'}), 200
 
     for staff in staff_to_update:
         staff.Dept = new_department

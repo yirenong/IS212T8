@@ -1,5 +1,5 @@
 <template>
-    <div class="container mt-2 mb-2">
+    <div class="container mt-2 mb-2 col-lg-8 col-sm-6">
         <div class="card p-2 with-shadow">
             <h4>Profile</h4>
             <hr>
