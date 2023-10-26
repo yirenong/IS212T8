@@ -225,12 +225,12 @@ export default {
     leftoverSkills(jobSkills, staffSkills) {
       return jobSkills.filter(skill => !staffSkills.includes(skill));
     },
-    isRoleAlreadyApplied(roleId) {
+    isRoleAlreadyApplied(Listing_ID) {
       // Check if the roleId appears in appliedRoles
-      return this.appliedRoles.includes(roleId);
+      return this.appliedRoles.includes(Listing_ID);
     },
-    apply(role_id){
-      this.$router.push({ name: 'applyJob', params: { id: role_id } });
+    apply(listing_id){
+      this.$router.push({ name: 'applyJob', params: { id: listing_id } });
     },
     sortbyalphabetical: function(){
       if (this.sortcheckbox == true) {
