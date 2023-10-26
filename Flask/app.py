@@ -93,14 +93,14 @@ class Application(db.Model):
     __tablename__ = 'application'
     Application_ID = db.Column(db.Integer, primary_key=True, autoincrement=True)
     Staff_ID = db.Column(db.Integer, nullable=False)
-    Role_ID = db.Column(db.Integer, nullable=False)
+    Listing_ID = db.Column(db.Integer, nullable=False)
     Date = db.Column(db.String, nullable=False)
     Status = db.Column(db.String, nullable=False)
 
 @app.route('/api/job_listing/<int:Staff_ID>/applications', methods=['GET'])
 def get_applications(Staff_ID):
     applications = Application.query.filter_by(Staff_ID=Staff_ID).all()
-    application_data = [application.Role_ID for application in applications]
+    application_data = [application.Listing_ID for application in applications]
 
     return jsonify(application_data)
 
@@ -109,14 +109,14 @@ def apply():
     data = request.get_json()
     
     staff_id = data.get('Staff_ID')
-    role_id = data.get('Role_ID')
+    listing_id = data.get('Listing_ID')
     date = data.get('Date')
     status = data.get('Status')
 
-    if staff_id is None or role_id is None or date is None or status is None:
+    if staff_id is None or listing_id is None or date is None or status is None:
         return jsonify({'error': 'Missing required fields'}), 400
 
-    new_application = Application(Staff_ID=staff_id, Role_ID=role_id, Date=date, Status=status)
+    new_application = Application(Staff_ID=staff_id, Listing_ID=listing_id, Date=date, Status=status)
 
     db.session.add(new_application)
     db.session.commit()

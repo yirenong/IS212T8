@@ -72,7 +72,7 @@ export default {
             job:null,
             user:null,
             application:{
-                Role_ID: null,
+                Listing_ID: null,
                 Staff_ID: null,
                 Status: "Pending",
                 Date: null
@@ -96,7 +96,7 @@ export default {
             axios.get(`http://localhost:5000/api/job_list/${id}`)
             .then(response => {
                 this.job = response.data;
-                this.application.Role_ID = this.job.Listing_ID;
+                this.application.Listing_ID = this.job.Listing_ID;
                 console.log('Job:', this.job);
             })
         },
@@ -111,7 +111,7 @@ export default {
             axios.post('http://localhost:5000/api/job_listing/apply', this.application)
             .then(response => {
                 alert(`Application submitted successfully
-                      Role Applied: ${ this.job.Role.Role_Name }
+                      Job Applied: ${ this.job.Role.Role_Name }
                       Date of Application: ${ this.application.Date }
                 `);
                 // axios.put(`http://localhost:5000/api/job_listing/${this.job.Listing_ID}/decrement_opening`)

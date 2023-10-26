@@ -26,7 +26,6 @@
               {{ skill.Skill_Name }}
             </label><br />
           </div>
-          <button type="button" class="btn btn-primary" @click="check()">Check</button>
         </div>
       <button type="submit" class="btn btn-primary mb-2" @click="updateRole()">Update</button>
     </form>
@@ -71,9 +70,6 @@ export default {
     console.log("unselectedSkills:", this.unselectedSkills);
   },
   methods: {
-    check(){
-      console.log("selectedSkills:", this.selectedSkills)
-    },
     fetchSkills() {
       return axios.get('http://localhost:5000/api/skill_list')
         .then(response => {
