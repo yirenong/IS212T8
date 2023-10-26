@@ -75,6 +75,12 @@ const routes = [
     name: 'skillscreation',
     component: () => import('./components/SkillCreation.vue'),
     meta: { allowedRoles: ['HR'] },
+  },
+  {
+    path: '/staff/staff_app',
+    name: 'staffapp',
+    component: () => import('./components/StaffApp.vue'),
+    meta: { allowedRoles: ['Staff'] },
   }
   
 ];

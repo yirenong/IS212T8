@@ -8,7 +8,7 @@ import requests
 
 app = Flask(__name__)
 #app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root:@localhost:3308/is212'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root:@localhost:3306/is212'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root:@localhost:3309/is212'
 db = SQLAlchemy(app)
 
 # Configure CORS to allow requests from your Vue.js frontend
@@ -492,6 +492,55 @@ def get_staff_skill_by_id(staff_id):
     }
 
     return jsonify(staff_skill_data), 200
+
+
+##################################################################################################################
+### Staff applied job ###
+
+@app.route('/api/staff/staff_app/<int:staff_id>', methods=['GET'])
+def get_data(staff_id): 
+    applications = Application.query.filter_by(Staff_ID=staff_id).all()
+    applied_listing_ids = [app.Listing_ID for app in applications]
+    listings = JobListing.query.filter(JobListing.Listing_ID.in_(applied_listing_ids)).all()
+    
+    application_data = [
+        {
+            "application_id": app.Application_ID,
+            "staff_id": app.Staff_ID,
+            "listing_id": app.Listing_ID,
+            "status": app.Status
+        } for app in applications
+    ]
+    
+    listing_data = [
+        {
+            "listing_id": listing.Listing_ID,
+            "role_id": listing.Role_ID
+        } for listing in listings
+    ]
+
+    role_ids = [listing.Role_ID for listing in listings]
+    roles = Role.query.filter(Role.Role_ID.in_(role_ids)).all()
+    
+    role_data = [
+        {
+            "role_id": role.Role_ID,
+            "role_name": role.Role_Name,
+            "description": role.Description,
+            "department": role.Department
+        } for role in roles
+    ]
+    
+    return jsonify({
+        "applications": application_data,
+        "listings": listing_data,
+        "roles": role_data
+    })
+
+
+
+
+
 
 if __name__ == '__main__':
     app.run(debug=True)
