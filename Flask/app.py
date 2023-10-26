@@ -7,7 +7,7 @@ from sqlalchemy import func
 import requests
 
 app = Flask(__name__)
-#app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root:@localhost:3308/is212'
+# app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root:@localhost:3308/is212'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root:@localhost:3309/is212'
 db = SQLAlchemy(app)
 
@@ -89,6 +89,9 @@ def get_job_listing_by_id(listing_id):
     else:
         return jsonify({"error": "Job listing not found"}, 404)
 
+##################################################################################################################
+### Job Application ###
+
 class Application(db.Model):
     __tablename__ = 'application'
     Application_ID = db.Column(db.Integer, primary_key=True, autoincrement=True)
@@ -97,10 +100,30 @@ class Application(db.Model):
     Date = db.Column(db.String, nullable=False)
     Status = db.Column(db.String, nullable=False)
 
+    def to_dict(self):
+        staff = Staff.query.filter_by(Staff_ID=self.Staff_ID).first()
+
+        return {
+            'Application_ID': self.Application_ID,
+            'Listing_ID': self.Listing_ID,
+            'Date': self.Date,
+            'Status': self.Status,
+            'Staff_ID': self.Staff_ID,
+            'Staff_Name': staff.Staff_FName + " " + staff.Staff_LName,
+            'Staff_Skills': [Skill.query.get(skill.Skill_ID).Skill_Name for skill in staff.skills]
+        }
+
 @app.route('/api/job_listing/<int:Staff_ID>/applications', methods=['GET'])
-def get_applications(Staff_ID):
+def get_applications_by_staff(Staff_ID):
     applications = Application.query.filter_by(Staff_ID=Staff_ID).all()
     application_data = [application.Listing_ID for application in applications]
+
+    return jsonify(application_data)
+
+@app.route('/api/job_listing/applications/<int:Listing_ID>/', methods=['GET'])
+def get_applications_by_job(Listing_ID):
+    applications = Application.query.filter_by(Listing_ID=Listing_ID).all()
+    application_data = [application.to_dict() for application in applications]
 
     return jsonify(application_data)
 

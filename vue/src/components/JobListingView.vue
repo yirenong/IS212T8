@@ -10,20 +10,29 @@
       </span>
     </p>
     <p class="mb-5">Number of Opening: {{ jobListing.Opening }}</p>
-    <p>Number of Applicants: {{ applicants.length }}</p>
+    <p>Number of applications: {{ applications.length }}</p>
     <ul class="list-group mb-3">
-      <li v-for="(applicant, index) in applicants"
+      <li v-for="(application, index) in applications"
           :key="index"
           class="list-group-item">
-          <div>{{ applicant.name }}</div> <br>
-          <div>Applicant Skills: 
-            <span v-for="(skill, index) in applicant.skills" 
-                    :key="index"
-                    class="badge me-2"
-                    :class="match(skill) ? 'bg-success' : 'bg-secondary'">
-                    {{ skill }}
-              </span>
-            </div>
+          <div class="float-start">
+              <h6>Applicant {{index+1}}: {{ application.Staff_Name }}</h6>
+              <div>Applicant Skills: 
+                <span v-for="(skill, index) in application.Staff_Skills" 
+                        :key="index"
+                        class="badge me-2"
+                        :class="match(skill) ? 'bg-success' : 'bg-secondary'">
+                        {{ skill }}
+                  </span>
+              </div>
+          </div>
+          <div class="border bg-light rounded p-2 float-end">
+              <p class="m-0">
+                Applied in: {{ application.Date.slice(5,16) }} <br>
+                Status: {{ application.Status }}
+              </p>
+          </div>
+
       </li>
     </ul>
     <button type="submit" class="btn btn-secondary mb-4" @click="returnToListings" >Return to listings</button>
@@ -36,36 +45,30 @@ import axios from 'axios';
 export default {
   data() {
     return {
+        jobListingId: this.$route.params.id,
         jobListing: null,
-        applicants: [
-          {
-            name: "Candidate 1",
-            skills: ['Java']
-          },
-          {
-            name: "Candidate 2",
-            skills: ['Python']
-          },
-          {
-            name: "Candidate 3",
-            skills: ['Database Management']
-          },
-          {
-            name: "Candidate 4",
-            skills: ['Java', 'Python', 'Database Management']
-          }
-        ]
+        applications: []
     };
   },
   created() {
-    axios.get(`http://localhost:5000/api/job_list/${this.$route.params.id}`)
+    
+    axios.get(`http://localhost:5000/api/job_list/${this.jobListingId}`)
+    .then(response => {
+      this.jobListing = response.data;
+      console.log('Job Listing:', this.jobListing);
+    })
+    .catch(error => {
+      console.error('Error fetching job listings:', error);
+    });
+    
+    axios.get(`http://localhost:5000/api/job_listing/applications/${this.jobListingId}`)  
       .then(response => {
-        this.jobListing = response.data;
-        console.log('Job Listing:', this.jobListing);
+          this.applications = response.data;
+          console.log("Applications: ", response.data)
       })
       .catch(error => {
-        console.error('Error fetching job listings:', error);
-      });
+        console.error('Error fetching applicant data:', error)
+      })
   },
   methods: {
       match(skill) {
