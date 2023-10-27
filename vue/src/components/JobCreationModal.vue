@@ -152,34 +152,42 @@
             // this.formErrors.salary = validateSalary(this.formData.salary)
             
             // Check if there are any errors
-            if (this.formErrors.title ||
+            if (!this.formData.opening){
+              console.log("add a number")
+            } 
+            else if (this.formData.opening <= 0){
+              alert("Please enter a valid number of openings")
+            }
+            else if (this.formErrors.title ||
                 this.formErrors.personOfContact ||
                 this.formErrors.description
                 // this.formErrors.salary ||
-            ) {
+            ) 
+            {
                 console.log("yes")
                 return
             }
-  
-            // Creates date
-            const currentDate = new Date().toJSON().slice(0,10);
-            this.formData.date_created = currentDate;
+            else{
+              // Creates date
+              const currentDate = new Date().toJSON().slice(0,10);
+              this.formData.date_created = currentDate;
 
-            const newJob = {
-                Role_ID: this.roles[this.roleIndex].Role_ID,
-                Opening: this.formData.opening,
-                Date_posted: this.formData.date_created
+              const newJob = {
+                  Role_ID: this.roles[this.roleIndex].Role_ID,
+                  Opening: this.formData.opening,
+                  Date_posted: this.formData.date_created
+              }
+
+              // Add new job listing to db
+              axios.post(`http://localhost:5000/api/job_list/new`, newJob)
+              .then(response => {
+                  console.log('Job Listing created successfully:', response.data);
+                  this.submitted = true;
+              })
+              .catch(error => {
+                  console.error('Error creating new job listing:', error);
+              });
             }
-
-            // Add new job listing to db
-            axios.post(`http://localhost:5000/api/job_list/new`, newJob)
-            .then(response => {
-                console.log('Job Listing created successfully:', response.data);
-                this.submitted = true;
-            })
-            .catch(error => {
-                console.error('Error creating new job listing:', error);
-            });
 
         },
         // Functions for dropdown menu

@@ -111,7 +111,7 @@ CREATE TABLE IF NOT EXISTS `Job_Listing` (
     FOREIGN KEY (`Role_ID`) REFERENCES `Role`(`Role_ID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
 
--- Insert Job_Listing
+--Insert Job_Listing
 INSERT INTO `Job_Listing` (`Listing_ID`, `Role_ID`, `Opening`, `Date_posted`)
 VALUES (1, 1, 3, '2023-09-28'),
        (2, 2, 2, '2023-09-29'),

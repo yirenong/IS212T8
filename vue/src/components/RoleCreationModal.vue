@@ -181,7 +181,7 @@ export default {
             alert("Please select a skill")
           }
           else if (this.formData.skills.includes(this.skillQuery)){
-            alert("Skill already added")
+            alert("Skill already added. Add something that is not added.")
           }
           else{
             this.formData.skills.push(this.skillQuery)
