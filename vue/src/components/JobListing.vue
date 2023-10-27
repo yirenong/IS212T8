@@ -102,7 +102,7 @@
             </div>
 
             <div class="col-md-4">
-              <div v-if="job.Role && job.Role.Skills && job.Role.Skills.length > 0" class="m-2">
+              <div v-if="job.Role && job.Role.Skills" class="m-2">
                 <h4>Match Percentage: {{ calculateMatchPercentage(job.Role.Skills) }}%</h4>
                 <DonutChart :percentage="calculateMatchPercentage(job.Role.Skills)" />
               </div>
@@ -200,27 +200,31 @@ export default {
       }
     },
     calculateMatchPercentage(jobSkills) {
-      if (!this.staffSkills || !Array.isArray(this.staffSkills.Skills)) {
+      if (jobSkills.length === 0) {
+        return 100;
+      }
+      else if (!this.staffSkills || !Array.isArray(this.staffSkills.Skills)) {
         console.error('staffSkills is not valid.');
         return 0;
       }
 
-      if (!Array.isArray(jobSkills)) {
+      else if (!Array.isArray(jobSkills)) {
         console.error('jobSkills is not an array.');
         return 0;
       }
+      else {
+        const staffSkillsArray = this.staffSkills.Skills;
+        const total = jobSkills.length;
+        let count = 0;
 
-      const staffSkillsArray = this.staffSkills.Skills;
-      const total = jobSkills.length;
-      let count = 0;
-
-      for (const skill of staffSkillsArray) {
-        if (jobSkills.includes(skill)) {
-          count++;
+        for (const skill of staffSkillsArray) {
+          if (jobSkills.includes(skill)) {
+            count++;
+          }
         }
-      }
 
-      return total === 0 ? 0 : (count / total) * 100;
+        return total === 0 ? 0 : (count / total) * 100;
+      }
     },
     leftoverSkills(jobSkills, staffSkills) {
       return jobSkills.filter(skill => !staffSkills.includes(skill));

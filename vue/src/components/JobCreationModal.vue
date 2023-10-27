@@ -66,7 +66,12 @@
 
         <!-- Autofilled section -->
         <p>Department: {{ formData.department }}</p>
-        <p>Skills Needed: {{ formData.skills }}</p>
+        <div>
+            <p class="d-inline mr-2">Skills Needed:</p> &nbsp;
+            <span class="badge bg-success text-white mr-2 p-2 d-inline" v-for="(skill, index) in formData.skills" :key="index">
+                {{ skill }}
+            </span>
+        </div><br>
         <p>Description: {{ formData.description }}</p>
 
         <button type="submit" class="btn btn-primary">Submit</button>

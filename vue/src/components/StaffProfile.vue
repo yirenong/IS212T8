@@ -36,7 +36,7 @@
                 <div class="profile-skills">
                     <h5>Skills</h5>
                     <hr>
-                    <span v-for="skill in staff_profile.Skills" :key="skill" class="badge text-bg-success">{{ skill }}</span>
+                    <span v-for="skill in staff_profile.Skills" :key="skill" class="badge text-bg-success p-2">{{ skill }}</span>
                 </div>
 
 

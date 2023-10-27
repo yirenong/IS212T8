@@ -26,9 +26,9 @@
         <!-- Skills -->
         <div class="form-group">
           <label for="skills">Skills:</label>
-          <ul>
-            <li v-for="skill in job.Role.Skills" :key="skill">{{ skill }}</li>
-          </ul>
+          <div>
+            <span v-for="skill in job.Role.Skills" :key="skill.Skill_ID" class="badge bg-success text-white p-2">{{ skill }}</span>
+          </div>
         </div>
       </div>
 
@@ -56,7 +56,7 @@
       </div>
 
       <div class="card-body">
-        <button class="btn btn-success" @click="apply">Apply</button>
+        <button class="btn btn-success" @click="apply" :disabled="checkIfApplied(this.id) === true">Apply</button>
       </div>
     </div>
   </div>
@@ -76,7 +76,8 @@ export default {
                 Staff_ID: null,
                 Status: "Pending",
                 Date: null
-            }
+            },
+            application_list: []
         };
     },
     created(){
@@ -90,8 +91,18 @@ export default {
         // }
         this.fetchJob(id);
         this.getUser();
+        if (this.user != null) {
+            this.getApplication();
+        }
     },
     methods:{
+        getApplication(){
+            axios.get(`http://localhost:5000/api/job_listing/${this.user.Staff_ID}/applications`)
+            .then(response => {
+                this.application_list = response.data;
+                console.log('Application List:', this.application_list);
+            })
+        },
         fetchJob(id){
             axios.get(`http://localhost:5000/api/job_list/${id}`)
             .then(response => {
@@ -104,6 +115,14 @@ export default {
             this.user = this.$session.get('user');
             this.application.Staff_ID = this.user.Staff_ID; 
             console.log('User Data:', this.user);
+        },
+        checkIfApplied(id){
+          if (id in this.application_list){
+            return true;
+          }
+          else{
+            return false;
+          }
         },
         apply(){
             this.application.Date = new Date().toISOString();
@@ -122,6 +141,7 @@ export default {
                 //   console.error('Error decrementing opening:', error);
                 // });
                 console.log('Application submitted successfully:', response.data);
+                this.$router.push('/staff/job-listing');
             })
             .catch(error => {
                 console.error('Error submitting application:', error);

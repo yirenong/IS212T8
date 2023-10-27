@@ -50,9 +50,9 @@
           <ul class="list-group list-group-horizontal">
               <li v-for="(skill, index) in formData.skills"
               :key="index" 
-              class="list-group-item">
-                  <span>{{ skill }}</span>
-                  <button @click.prevent="removeSkill(skill)" type="button" class="close" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+              class="list-group-item badge bg-success text-white">
+                {{ skill }}
+                  <button @click.prevent="removeSkill(skill)" type="button" class="close bg-transparent border-0" aria-label="Close"><span class="font-weight-bold text-white" aria-hidden="true">&times;</span></button>
               </li>
           </ul>
       </div>
@@ -77,7 +77,12 @@
       <div class="alert alert-success" role="alert">Role created successfully!</div>
       <p>Title: {{ formData.title }}</p>
       <p>Title: {{ formData.department }}</p>
-      <p>Skills Needed: {{ formData.skills }}</p>
+      <div>
+        <p class="d-inline mr-2">Skills Needed:</p> &nbsp;
+        <span class="badge bg-success text-white mr-2 p-2 d-inline" v-for="(skill, index) in formData.skills" :key="index">
+            {{ skill }}
+        </span>
+    </div>
       <p>Description: {{ formData.description }}</p>
       <button @click="resetForm" class="btn btn-primary">Create New Role</button>
     </div>
@@ -172,9 +177,16 @@ export default {
           this.showDropdown = false
       },
       addSkill() {
-          if (this.skillQuery == '') return
-          this.formData.skills.push(this.skillQuery)
-          this.skillQuery = ''
+          if (this.skillQuery == ''){
+            alert("Please select a skill")
+          }
+          else if (this.formData.skills.includes(this.skillQuery)){
+            alert("Skill already added")
+          }
+          else{
+            this.formData.skills.push(this.skillQuery)
+            this.skillQuery = ''
+          }
       },
       removeSkill(skill) {
           this.formData.skills = this.formData.skills.filter(s => s != skill)
