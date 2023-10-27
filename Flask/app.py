@@ -7,7 +7,7 @@ from sqlalchemy import func
 import requests
 
 app = Flask(__name__)
-# app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root:@localhost:3308/is212'
+#app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root:@localhost:3308/is212'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root:@localhost:3309/is212'
 db = SQLAlchemy(app)
 
@@ -254,6 +254,13 @@ class Staff_Skill(db.Model):
             'Staff_ID': self.Staff_ID,
             'Skill_ID': self.Skill_ID
         }
+
+@app.route('/api/skill/', methods=['GET'])
+def get_skill():
+    skill_data = Skill.query.all()
+    skill_list = [skill.to_dict() for skill in skill_data]
+
+    return jsonify(skill_list)
 
 @app.route('/api/skill' , methods=['POST'])
 def add_skill():
