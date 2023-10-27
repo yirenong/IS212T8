@@ -8,7 +8,7 @@ import requests
 
 app = Flask(__name__)
 #app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root:@localhost:3308/is212'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root:@localhost:3309/is212'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+mysqlconnector://root:@localhost:3306/is212'
 db = SQLAlchemy(app)
 
 # Configure CORS to allow requests from your Vue.js frontend
@@ -284,7 +284,7 @@ def search_staff_by_skill():
 
     numbersofskills = len(datalist)-1 if exactmatch == 1 else 1
     print(numbersofskills)
-    staff_skillslist =Staff_Skill.query.filter(Staff_Skill.Skill_ID.in_(datalist)).group_by(Staff_Skill.Staff_ID).having(func.count(Staff_Skill.Skill_ID) >=numbersofskills).with_entities(Staff_Skill.Staff_ID).all()
+    staff_skillslist =Staff_Skill.query.filter(Staff_Skill.Skill_ID.in_(datalist)).group_by(Staff_Skill.Staff_ID).having(func.count(Staff_Skill.Skill_ID) >numbersofskills).with_entities(Staff_Skill.Staff_ID).all()
     staff_id = [staff[0] for staff in staff_skillslist]
 
     staff_list = Staff.query.filter(Staff.Staff_ID.in_(staff_id)).all()
