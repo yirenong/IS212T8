@@ -12,7 +12,8 @@
       <div class="col-md-4">
         <label for="alphabetical-order"></label>
         <div class="form-check">
-          <input type="checkbox" class="form-check-input" id="alphabetical-order" name="alphabetical-order" v-model="sortcheckbox" @click="sortbyalphabetical">
+          <input type="checkbox" class="form-check-input" id="alphabetical-order" name="alphabetical-order"
+            v-model="sortcheckbox" @click="sortbyalphabetical">
           <label class="form-check-label" for="alphabetical-order">Alphabetical Order</label>
         </div>
       </div>
@@ -22,17 +23,33 @@
           v-model="searchbyname">
       </div>
     </div>
-
+    <div class="row mb-4">
+      <div class="col-md-4">
+        <label for="staffskills-select">Filter by My Skills: </label>
+        <select class="form-control" id="staffskills-select" name="staffskills-select" @change="buttonskillselection($event)" >
+          <option value="all">All</option>
+          <option v-for="skill in staffSkills.Skills" :key="skill" :value="skill">{{ skill }}</option>
+        </select>
+      </div>
+      <div class="col-md-8">
+        <!-- on click of staffskill, it will append button with selected skill name name close icon to remove selection  
+            on click of close icon, it will remove skill from filterbystaffskills array
+        -->
+        <label for="staffskills-select">Selected Skills: </label>
+        <br>
+        <button type="button" class="btn btn-primary" v-for="skill in filterbystaffskills" :key="skill" @click="removeSkillselection($event)">
+          {{ skill }}
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+    </div>
     <div v-if="isLoading">
       Loading...
     </div>
     <div v-else>
-      <transition-group name="staggered-fade" tag="div" 
-      v-bind:css="false"
-    v-on:before-enter="beforeEnter"
-    v-on:enter="enter"
-    v-on:leave="leave">
-        <div v-for="(job) in computedList" :key="job.Listing_ID" class="card mb-4 list-complete-item" >
+      <transition-group name="staggered-fade" tag="div" v-bind:css="false" v-on:before-enter="beforeEnter"
+        v-on:enter="enter" v-on:leave="leave">
+        <div v-for="(job) in computedList" :key="job.Listing_ID" class="card mb-4 list-complete-item">
           <div class="row" v-if="job.Role.Role_Name.toLowerCase().includes(searchbyname.toLowerCase())">
             <div class="card-body col-md-8">
               <div class="m-2">
@@ -44,7 +61,7 @@
                   <tbody>
                     <tr>
                       <td><b>Department:</b></td>
-                      <td>{{ job.Role.Department}}</td>
+                      <td>{{ job.Role.Department }}</td>
                     </tr>
                     <tr>
                       <td><b>Number of Openings:</b></td>
@@ -95,7 +112,8 @@
               </div>
               <hr>
               <div class="m-2">
-                <button class="btn btn-success" @click="apply(job.Listing_ID)" :disabled="isRoleAlreadyApplied(job.Listing_ID)">
+                <button class="btn btn-success" @click="apply(job.Listing_ID)"
+                  :disabled="isRoleAlreadyApplied(job.Listing_ID)">
                   Apply
                 </button>
               </div>
@@ -120,11 +138,13 @@
 .list-complete-item {
   transition: all 1s;
 }
-.list-complete-enter, .list-complete-leave-to
- {
+
+.list-complete-enter,
+.list-complete-leave-to {
   opacity: 0;
   transform: translateY(30px);
 }
+
 .list-complete-leave-active {
   position: absolute;
 }
@@ -143,12 +163,14 @@ export default {
     return {
       jobListings: [],
       userData: null,
-      staffSkills: null,
+      staffSkills: [],
       isLoading: true,
       searchbyname: '',
       filterbydate: 'latest',
       sortcheckbox: false,
       appliedRoles: null,
+      filterbystaffskills: [],
+      filteredjoblistings: [],
     };
   },
   created() {
@@ -160,13 +182,13 @@ export default {
     }
 
   },
-  computed:{
+  computed: {
     // sort computedList by date posted (latest to oldest) or (oldest to latest)
     computedList: function () {
       var vm = this;
-      return this.jobListings.filter(function (item) {
+      return this.filteredjoblistings.filter(function (item) {
         return item.Role.Role_Name.toLowerCase().indexOf(vm.searchbyname.toLowerCase()) !== -1 &&
-        item.Opening > 0;
+          item.Opening > 0;
       })
     }
   },
@@ -176,6 +198,7 @@ export default {
         // Fetch job listings
         const jobListingsResponse = await axios.get('http://localhost:5000/api/job_list');
         this.jobListings = jobListingsResponse.data;
+        this.filteredjoblistings = this.jobListings;
         console.log('Job Listings:', this.jobListings);
 
         // Fetch user data
@@ -233,10 +256,10 @@ export default {
       // Check if the roleId appears in appliedRoles
       return this.appliedRoles.includes(Listing_ID);
     },
-    apply(listing_id){
+    apply(listing_id) {
       this.$router.push({ name: 'applyJob', params: { id: listing_id } });
     },
-    sortbyalphabetical: function(){
+    sortbyalphabetical: function () {
       if (this.sortcheckbox == true) {
         this.computedList.sort((a, b) => (a.Role.Role_Name > b.Role.Role_Name) ? 1 : -1)
       }
@@ -244,13 +267,38 @@ export default {
         this.computedList.sort((a, b) => (a.Role.Role_Name < b.Role.Role_Name) ? 1 : -1)
       }
     },
-    sortbydate: function (){
+    sortbydate: function () {
       if (this.filterbydate == 'latest') {
         this.computedList.sort((a, b) => (a.Date_posted < b.Date_posted) ? 1 : -1)
       }
       else if (this.filterbydate == 'oldest') {
         this.computedList.sort((a, b) => (a.Date_posted > b.Date_posted) ? 1 : -1)
       }
+    },
+    buttonskillselection: function (event) {
+      if (event.target.value == 'all') {
+        this.filterbystaffskills = [];
+      }
+      else {
+        if (!this.filterbystaffskills.includes(event.target.value)) {
+          this.filterbystaffskills.push(event.target.value);
+        }
+      }
+      // if filterbystaffskills array is not empty, each joblisting must contain all the skills in the filterbystaffskills array
+      if (this.filterbystaffskills.length > 0) {
+        this.filteredjoblistings = this.jobListings.filter(job => {
+          return this.filterbystaffskills.every(skill => job.Role.Skills.includes(skill));
+        });
+      }
+      else{
+        this.filteredjoblistings = this.jobListings;
+      }
+      console.log(this.jobListings)
+   
+    },
+    removeSkillselection: function (event) {
+      // remove skill from filterbystaffskills array
+      this.filterbystaffskills.splice(this.filterbystaffskills.indexOf(event.target.textContent), 1);
     },
     beforeEnter: function (el) {
       el.style.opacity = 0

@@ -3,7 +3,10 @@
     <AppHeader />
     <!-- <RoleCreationModal /> -->
     <!-- Use named views to specify where components should be rendered -->
-    <router-view></router-view>
+    <div class=" pb-5">
+      <router-view></router-view>
+    </div>
+    
     
     <!-- The footer remains constant -->
     <AppFooter />
