@@ -4,7 +4,7 @@
     <div class="row mb-4">
       <div class="col-md-4 ">
         <label for="date-select">Sort by: </label>
-        <select class="form-control" id="date-select" name="date-select" v-model="filterbydate" @change="sortbydate">
+        <select class="form-control form-select" id="date-select" name="date-select" v-model="filterbydate" @change="sortbydate">
           <option value="latest">Latest Date</option>
           <option value="oldest">Oldest Date</option>
         </select>
@@ -26,8 +26,8 @@
     <div class="row mb-4">
       <div class="col-md-4">
         <label for="staffskills-select">Filter by My Skills: </label>
-        <select class="form-control" id="staffskills-select" name="staffskills-select" @change="buttonskillselection($event)" >
-          <option value="all">All</option>
+        <select class="form-control form-select" id="staffskills-select" name="staffskills-select" @change="buttonskillselection($event)" >
+          <option value="all" selected="selected">All</option>
           <option v-for="skill in staffSkills.Skills" :key="skill" :value="skill">{{ skill }}</option>
         </select>
       </div>
@@ -37,7 +37,8 @@
         -->
         <label for="staffskills-select">Selected Skills: </label>
         <br>
-        <button type="button" class="btn btn-primary" v-for="skill in filterbystaffskills" :key="skill" @click="removeSkillselection($event)">
+        <div class="badge bg-primary text-wrap" v-if="filterbystaffskills.length == 0">Showing All Job Listings</div>
+        <button type="button" class="btn btn-primary rounded-pill me-1 " v-for="skill in filterbystaffskills" :key="skill" @click="removeSkillselection($event)">
           {{ skill }}
           <span aria-hidden="true">&times;</span>
         </button>
