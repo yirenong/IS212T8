@@ -2,21 +2,23 @@
   <div class="container mt-4">
     <h2>Job Listings</h2>
     <div class="row mb-4">
-      <div class="col-md-4 ">
+      <div class="col-md-6 ">
         <label for="date-select">Sort by: </label>
         <select class="form-control" id="date-select" name="date-select" v-model="filterbydate" @change="sortbydate">
           <option value="latest">Latest Date</option>
           <option value="oldest">Oldest Date</option>
+          <option value="a-z">Alphabetical: A-Z</option>
+          <option value="z-a">Alphabetical: Z-A</option>
         </select>
       </div>
-      <div class="col-md-4">
+      <!-- <div class="col-md-4">
         <label for="alphabetical-order"></label>
         <div class="form-check">
           <input type="checkbox" class="form-check-input" id="alphabetical-order" name="alphabetical-order" v-model="sortcheckbox" @click="sortbyalphabetical">
           <label class="form-check-label" for="alphabetical-order">Alphabetical Order</label>
         </div>
-      </div>
-      <div class="col-md-4">
+      </div> -->
+      <div class="col-md-6">
         <label for="input-text"></label>
         <input type="text" class="form-control" id="input-text" name="input-text" placeholder="Seach by Name"
           v-model="searchbyname">
@@ -236,20 +238,18 @@ export default {
     apply(listing_id){
       this.$router.push({ name: 'applyJob', params: { id: listing_id } });
     },
-    sortbyalphabetical: function(){
-      if (this.sortcheckbox == true) {
-        this.computedList.sort((a, b) => (a.Role.Role_Name > b.Role.Role_Name) ? 1 : -1)
-      }
-      else if (this.sortcheckbox == false) {
-        this.computedList.sort((a, b) => (a.Role.Role_Name < b.Role.Role_Name) ? 1 : -1)
-      }
-    },
     sortbydate: function (){
       if (this.filterbydate == 'latest') {
         this.computedList.sort((a, b) => (a.Date_posted < b.Date_posted) ? 1 : -1)
       }
       else if (this.filterbydate == 'oldest') {
         this.computedList.sort((a, b) => (a.Date_posted > b.Date_posted) ? 1 : -1)
+      }
+      else if (this.filterbydate == 'a-z') {
+        this.computedList.sort((a, b) => (a.Role.Role_Name > b.Role.Role_Name) ? 1 : -1)
+      }
+      else if (this.filterbydate == 'z-a') {
+        this.computedList.sort((a, b) => (a.Role.Role_Name < b.Role.Role_Name) ? 1 : -1)
       }
     },
     beforeEnter: function (el) {
