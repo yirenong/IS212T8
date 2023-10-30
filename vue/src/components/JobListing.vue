@@ -34,7 +34,7 @@
     v-on:before-enter="beforeEnter"
     v-on:enter="enter"
     v-on:leave="leave">
-        <div v-for="(job) in computedList" :key="job.Listing_ID" class="card mb-4 list-complete-item" >
+        <div v-for="(job) in computedList" :key="job.Listing_ID" class="card shadow mb-4 list-complete-item" >
           <div class="row" v-if="job.Role.Role_Name.toLowerCase().includes(searchbyname.toLowerCase())">
             <div class="card-body col-md-8">
               <div class="m-2">
@@ -225,7 +225,8 @@ export default {
           }
         }
 
-        return total === 0 ? 0 : (count / total) * 100;
+        const percentage = total === 0 ? 0 : (count / total) * 100;
+        return Number(percentage.toFixed(2));
       }
     },
     leftoverSkills(jobSkills, staffSkills) {

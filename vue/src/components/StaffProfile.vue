@@ -1,6 +1,6 @@
 <template>
-    <div class="container mt-2 mb-2 col-lg-8 col-sm-6">
-        <div class="card p-2 with-shadow">
+    <div class="container mt-4 mb-4 col-lg-8 col-sm-6">
+        <div class="card shadow p-4 with-shadow">
             <h4>Profile</h4>
             <hr>
             <div v-if="staff_profile">

@@ -1,4 +1,5 @@
 <template>
+    <div class="container mt-4"> 
     <div v-if="$session.get('user').Dept == 'HR'">
         <div>
 
@@ -74,6 +75,7 @@
     <div v-else>
         <H1 style="color:red">You are not authorized to view this page</H1>
     </div>
+</div>
 </template>
 <style>
 .col {

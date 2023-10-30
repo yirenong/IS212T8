@@ -1,6 +1,6 @@
 <template>
-    <footer class="footer bg-light text-center py-3">
-      <p>&copy; 2023 Your Company</p>
+    <footer class="page-footer bg-light text-center py-2">
+      <p class="pt-3">&copy; 2023 All-In-One</p>
     </footer>
   </template>
   
