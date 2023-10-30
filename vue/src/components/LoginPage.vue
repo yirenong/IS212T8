@@ -1,5 +1,5 @@
 <template>
-  <div class="login-container">
+  <div class="login-container shadow mt-4 mb-4">
     <h2>Login</h2>
     <form @submit.prevent="login">
       <div class="form-group">
