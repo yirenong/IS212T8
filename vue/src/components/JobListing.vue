@@ -20,7 +20,7 @@
       </div> -->
       <div class="col-md-6">
         <label for="input-text"></label>
-        <input type="text" class="form-control" id="input-text" name="input-text" placeholder="Seach by Name"
+        <input type="text" class="form-control" id="input-text" name="input-text" placeholder="Search by Name"
           v-model="searchbyname">
       </div>
     </div>
