@@ -4,7 +4,8 @@
     <div class="row mb-4">
       <div class="col-md-6 ">
         <label for="date-select">Sort by: </label>
-        <select class="form-control form-select" id="date-select" name="date-select" v-model="filterbydate" @change="sortbydate">
+        <select class="form-control form-select" id="date-select" name="date-select" v-model="filterbydate"
+          @change="sortbydate">
           <option value="latest">Latest Date</option>
           <option value="oldest">Oldest Date</option>
           <option value="a-z">Alphabetical: A-Z</option>
@@ -28,7 +29,8 @@
     <div class="row mb-4">
       <div class="col-md-4">
         <label for="staffskills-select">Filter by My Skills: </label>
-        <select class="form-control form-select" id="staffskills-select" name="staffskills-select" @change="buttonskillselection($event)" >
+        <select class="form-control form-select" id="staffskills-select" name="staffskills-select"
+          @change="buttonskillselection($event)">
           <option value="all" selected="selected">All</option>
           <option v-for="skill in staffSkills.Skills" :key="skill" :value="skill">{{ skill }}</option>
         </select>
@@ -40,7 +42,8 @@
         <label for="staffskills-select">Selected Skills: </label>
         <br>
         <div class="badge bg-primary text-wrap" v-if="filterbystaffskills.length == 0">Showing All Job Listings</div>
-        <button type="button" class="btn btn-primary rounded-pill me-1 " v-for="skill in filterbystaffskills" :key="skill" @click="removeSkillselection($event)">
+        <button type="button" class="btn btn-primary rounded-pill me-1 " v-for="skill in filterbystaffskills" :key="skill"
+          @click="removeSkillselection($event)">
           {{ skill }}
           <span aria-hidden="true">&times;</span>
         </button>
@@ -263,7 +266,7 @@ export default {
     apply(listing_id) {
       this.$router.push({ name: 'applyJob', params: { id: listing_id } });
     },
-    sortbyalphabetical: function(){
+    sortbyalphabetical: function () {
       if (this.sortcheckbox == true) {
         this.computedList.sort((a, b) => (a.Role.Role_Name > b.Role.Role_Name) ? 1 : -1)
       }
@@ -271,7 +274,7 @@ export default {
         this.computedList.sort((a, b) => (a.Role.Role_Name < b.Role.Role_Name) ? 1 : -1)
       }
     },
-    sortbydate: function (){
+    sortbydate: function () {
       if (this.filterbydate == 'latest') {
         this.computedList.sort((a, b) => (a.Date_posted < b.Date_posted) ? 1 : -1)
       }
@@ -300,40 +303,20 @@ export default {
           return this.filterbystaffskills.every(skill => job.Role.Skills.includes(skill));
         });
       }
-      else{
-        this.filteredjoblistings = this.jobListings;
-      }
-      console.log(this.jobListings)
-   
-    },
-    removeSkillselection: function (event) {
-      // remove skill from filterbystaffskills array
-      this.filterbystaffskills.splice(this.filterbystaffskills.indexOf(event.target.textContent), 1);
-    },
-    buttonskillselection: function (event) {
-      if (event.target.value == 'all') {
-        this.filterbystaffskills = [];
-      }
       else {
-        if (!this.filterbystaffskills.includes(event.target.value)) {
-          this.filterbystaffskills.push(event.target.value);
-        }
-      }
-      // if filterbystaffskills array is not empty, each joblisting must contain all the skills in the filterbystaffskills array
-      if (this.filterbystaffskills.length > 0) {
-        this.filteredjoblistings = this.jobListings.filter(job => {
-          return this.filterbystaffskills.every(skill => job.Role.Skills.includes(skill));
-        });
-      }
-      else{
         this.filteredjoblistings = this.jobListings;
       }
       console.log(this.jobListings)
-   
+      
+
+
     },
     removeSkillselection: function (event) {
       // remove skill from filterbystaffskills array
       this.filterbystaffskills.splice(this.filterbystaffskills.indexOf(event.target.textContent), 1);
+      if (this.filterbystaffskills.length ==0) {
+        this.filteredjoblistings = this.jobListings;
+      }
     },
     beforeEnter: function (el) {
       el.style.opacity = 0
