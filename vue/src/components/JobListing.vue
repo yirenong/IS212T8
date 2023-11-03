@@ -184,6 +184,7 @@ export default {
       this.$router.push('/login'); // Redirect to login page
     }
     else {
+      
       this.loadData();
     }
 

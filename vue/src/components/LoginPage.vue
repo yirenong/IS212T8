@@ -46,26 +46,32 @@ export default {
         .then(response => {
           console.log(response.data); // Log the response message
           const message = response.data.message;
-          
+
           // Redirect based on the response message
           if (message === 'Management Login') {
-          if (this.$route.path !== '/hr/job-listing') {
+
             sessionStorage.setItem('userRole', 'HR');
             this.$session.start();
             this.$session.set('user', response.data);
-            this.$router.push('/hr/job-listing');
-          }
-        } else if (message === 'STAFF Login') {
-          if (this.$route.path !== '/staff/job-listing') {
+            this.$session.set('redirect', true);
+            this.$router.go(0);
+            
+
+
+          } else if (message === 'STAFF Login') {
+
             sessionStorage.setItem('userRole', 'Staff');
             this.$session.start();
             this.$session.set('user', response.data);
-            this.$router.push('/staff/job-listing');
-          }
-          } else {
+            this.$session.set('redirect', true);
+            this.$router.go(0);
+
+
+          }else {
             this.loginError = 'Invalid login message. Please contact your administrator.';
+            
           }
-          this.$router.go(0);
+          
         })
         .catch(error => {
           console.error('Error during login:', error);

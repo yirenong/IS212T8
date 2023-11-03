@@ -1,7 +1,7 @@
 <template>
   <nav class="navbar navbar-expand-lg navbar-light bg-light">
     <a v-if="isHR" class="navbar-brand mr-5 p-3">All-In-One</a>
-    <a v-else class="navbar-brand mr-5  p-3" >All-In-One</a>
+    <a v-else class="navbar-brand mr-5  p-3">All-In-One</a>
     <!-- <router-link to="/" class="navbar-brand">Job Listing</router-link>
     <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
@@ -58,29 +58,38 @@ export default {
       user: null,
     };
   },
-  created() {
+  mounted() {
     if (this.$session.get('user')) {
       this.isAuthenticated = true;
       this.user = this.$session.get('user');
-      if (this.user.Dept === 'HR')
-      {
-        this.$router.push('/hr/job-listing'); // Redirect to job listing page
+      console.log(this.$router.currentRoute.path)
+      //console.log this.$router.currentRoute.path previous route
+
+
+      if (this.$session.get('redirect')) {
+        this.$session.set('redirect', false);
+        if (this.user.Dept === 'HR') {
+          this.$router.push('/hr/job-listing'); // Redirect to job listing page
+        }
+        else {
+          this.$router.push('/staff/job-listing'); // Redirect to job listing page
+        }
       }
-      else{
-        this.$router.push('/staff/job-listing'); // Redirect to job listing page
-      }
-      
+
+
     }
-    else{
+    else {
+      if(!this.$session.get('user')) {
       this.$router.push('/'); // Redirect to login page
+      }
     }
   },
   computed: {
     isHR() {
-      return this.isAuthenticated && this.user && this.$session.get('user').Dept === 'HR';
+      return this.isAuthenticated && this.$session.get('user').Dept === 'HR';
     },
     isStaff() {
-      return this.isAuthenticated && this.user && this.$session.get('user').Dept !== 'HR';
+      return this.isAuthenticated &&this.$session.get('user').Dept !== 'HR';
     },
   },
   methods: {
@@ -88,8 +97,8 @@ export default {
       this.$session.destroy();
       this.$router.go(0);
     },
-    print(){
-      console.log(this.user);      
+    print() {
+      console.log(this.user);
     }
   },
   watch: {
@@ -103,7 +112,7 @@ export default {
       deep: true,
     },
     user: {
-      handler: function(val) {
+      handler: function (val) {
         console.log('User variable changed:', val);
       },
       deep: true,

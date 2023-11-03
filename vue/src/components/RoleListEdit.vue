@@ -114,7 +114,8 @@ export default {
         .then(() => {
           window.alert('Role and role skills updated successfully.');
           //reload page
-          window.location.reload();
+
+          this.$router.push('/hr/role-listing');
         })
         .catch(error => {
           console.error('Error updating role and role skills:', error);
