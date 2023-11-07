@@ -1,4 +1,7 @@
-# IS212T8 Scrum Project User Manual: Setting Up the Application
+# IS212T8 Scrum Project Readme and User Manual: Setting Up the Application
+## Repo Name
+IS212T8: https://github.com/yirenong/IS212T8.git
+
 
 ## Step 1: Clone the Repository and Open in IDE
 - Clone the application repository from: https://github.com/yirenong/IS212T8
