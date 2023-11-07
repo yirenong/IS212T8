@@ -128,9 +128,6 @@ export default {
           // Reset form errors
           this.formErrors = {
               title: '',
-              // department: '',
-              // // salary: '',
-              // personOfContact: '',
               description: ''
           }
 
@@ -210,7 +207,6 @@ function validateEmpty(value) {
 </script>
 
 <style scoped>
-/* Add your CSS styles here */
 .error {
   color: red;
 }

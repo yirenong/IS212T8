@@ -108,14 +108,12 @@
           description: '',
           department: '',
           date_created: ''
-          // salary: ''
         },
         user: null,
         formErrors: {
             title: '',
             personOfContact: '',
             description: ''
-            // salary: '',
         },
         showDropdown: false
       };
@@ -142,14 +140,12 @@
                 title: '',
                 personOfContact: '',
                 description: ''
-                // salary: '',
             }
   
             // Form Validation
             this.formErrors.title = this.roleIndex == -1 ? "Please select a role" : ""
             this.formErrors.opening = validateEmpty(this.formData.opening) || validatePositive(this.formData.opening)
             this.formErrors.personOfContact = validateEmpty(this.formData.personOfContact)
-            // this.formErrors.salary = validateSalary(this.formData.salary)
             
             // Check if there are any errors
             if (!this.formData.opening){
@@ -161,7 +157,6 @@
             else if (this.formErrors.title ||
                 this.formErrors.personOfContact ||
                 this.formErrors.description
-                // this.formErrors.salary ||
             ) 
             {
                 console.log("yes")
@@ -233,7 +228,6 @@
   </script>
   
   <style scoped>
-  /* Add your CSS styles here */
   .error {
     color: red;
   }

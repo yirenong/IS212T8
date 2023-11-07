@@ -130,8 +130,8 @@ export default {
   padding: 15px;
   border-radius: 5px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  width: 70%; /* adjust this to make the card narrower or wider */
-  max-width: 800px; /* you can set a maximum width so it doesn't get too wide on large screens */
+  width: 70%;
+  max-width: 800px; 
 }
 
 .application-card h3 {
