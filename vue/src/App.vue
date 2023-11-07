@@ -16,13 +16,12 @@
 <script>
 import AppHeader from "./components/HeaderComp.vue";
 import AppFooter from "./components/FooterComp.vue";
-//import RoleCreationModal from "./components/RoleCreationModal.vue";
 
 export default {
   components: {
     AppHeader,
     AppFooter,
-   // RoleCreationModal,
+
   }
 };
 </script>

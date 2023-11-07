@@ -13,7 +13,6 @@ db = SQLAlchemy(app)
 
 # Configure CORS to allow requests from your Vue.js frontend
 cors = CORS(app, resources={r"/api/*": {"origins": "http://localhost:8080"}})
-# CORS(app, resources={r"/api/*": {"origins": "http://localhost:8080/"}})
 
 ##################################################################################################################
 ### Get All Job Listings (Story #1) ###
@@ -220,9 +219,6 @@ def login():
         else:
             userData['message'] = "STAFF Login"
             return jsonify(userData), 200
-
-            # return redirect(url_for('http://localhost:5000/api/job_list'))
-        # return jsonify({"message": "Login successful"}), 200
     else:
         return jsonify({"message": "Login failed"}), 401
 
@@ -349,7 +345,6 @@ def get_staff_skill():
             'Dept': staff.Dept,
             'Skills': [skill.Skill_ID for skill in staff_skill_data if skill.Staff_ID == staff.Staff_ID]
         })
-    # staff_skill = [skill.to_dict() for skill in staff_skill_data]
 
     return jsonify(staff_skill)
 
@@ -410,21 +405,6 @@ def get_role_by_id(role_id):
 
     role_data = role.to_dict()
     return jsonify(role_data), 200
-
-# @app.route('/api/job_listing/<int:listing_id>/decrement_opening', methods=['PUT'])
-# def decrement_opening(listing_id):
-#     job_listing = JobListing.query.get(listing_id)
-
-#     if job_listing is None:
-#         return jsonify({'message': 'Job listing not found'}), 404
-
-#     if job_listing.Opening > 0:
-#         job_listing.Opening -= 1
-#         db.session.commit()
-#         return jsonify({'message': 'Opening decremented by 1'}), 200
-#     else:
-#         return jsonify({'message': 'No more openings available'}), 400
-
 
 
 @app.route('/api/roles/<int:role_id>', methods=['PUT'])

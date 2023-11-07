@@ -55,20 +55,6 @@
                     <th>Staff Skills</th>
                 </tr>
             </tfoot>
-            <!--<tbody>
-                <tr v-for="(staff, index) in staff_skill" :key="index">
-                    <td>{{ staff.Staff_ID }}</td>
-                    <td>{{ staff.Staff_FName + staff.Staff_LName }}</td>
-                    <td>{{ staff.Dept }}</td>
-                    <td>
-                        <ul>
-                            <li v-for="(skill, skillIndex) in staff.Skills" :key="skillIndex">
-                                {{ skill_list[parseInt(skill) - 1].Skill_Name }}
-                            </li>
-                        </ul>
-                    </td>
-                </tr>
-            </tbody> -->
         </table>
         
     </div>
@@ -131,7 +117,6 @@ import "datatables.net-searchpanes-dt";
 import "datatables.net-searchpanes-dt/css/searchPanes.dataTables.min.css";
 import "datatables.net-select-dt";
 import "datatables.net-select-dt/css/select.dataTables.min.css";
-// impo
 
 
 import axios from "axios";

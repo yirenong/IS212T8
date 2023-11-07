@@ -12,14 +12,6 @@
           <option value="z-a">Alphabetical: Z-A</option>
         </select>
       </div>
-      <!-- <div class="col-md-4">
-        <label for="alphabetical-order"></label>
-        <div class="form-check">
-          <input type="checkbox" class="form-check-input" id="alphabetical-order" name="alphabetical-order"
-            v-model="sortcheckbox" @click="sortbyalphabetical">
-          <label class="form-check-label" for="alphabetical-order">Alphabetical Order</label>
-        </div>
-      </div> -->
       <div class="col-md-6">
         <label for="input-text"></label>
         <input type="text" class="form-control" id="input-text" name="input-text" placeholder="Search by Name"
