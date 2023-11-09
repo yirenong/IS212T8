@@ -41,13 +41,13 @@ class FlaskTestCase(unittest.TestCase):
         response = self.client.get('/api/job_list')
         self.assertEqual(response.status_code, 200)
         data = json.loads(response.get_data(as_text=True))
-        self.assertEqual(data, mock_job_listings)
+        self.assertEqual(data, mock_job_listing)
 
     def test_get_job_listing_by_id(self):
         """Test API can get a single job listing by its ID."""
         response = self.client.get('/api/job_list/1')
         self.assertEqual(response.status_code, 200)
         data = json.loads(response.get_data(as_text=True))
-        self.assertEqual(data, mock_job_listings[0])
+        self.assertEqual(data, mock_job_listing[0])
 if __name__ == '__main__':
     unittest.main()
