@@ -57,8 +57,10 @@ class FlaskTestCase(unittest.TestCase):
     def test_get_job_listing_by_id(self):
         """Test API can get a single job listing by its ID."""
         response = self.client.get('/api/job_list/1')
-        self.assertEqual(response.status_code, 200)
         data = json.loads(response.get_data(as_text=True))
+        print("Expected:", mock_job_listing_dict)
+        print("Got:", data)
+        self.assertEqual(response.status_code, 200)
         self.assertEqual(data, mock_job_listing_dict)
 
 if __name__ == '__main__':
