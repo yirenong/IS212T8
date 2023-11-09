@@ -28,11 +28,17 @@ class FlaskTestCase(unittest.TestCase):
         self.app_context = self.app.app_context()
         self.app_context.push()
         
-        # Mock the database session query
+        # Create a mock job listing
         self.mock_job_listing = MagicMock()
         self.mock_job_listing.to_dict.return_value = mock_job_listing_dict
-        db.session.query.return_value.all.return_value = [self.mock_job_listing]
-        db.session.query.return_value.get.return_value = self.mock_job_listing
+
+        # Create a MagicMock for the query
+        self.mock_query = MagicMock()
+        self.mock_query.all.return_value = [self.mock_job_listing]
+        self.mock_query.get.return_value = self.mock_job_listing
+        
+        # Patch db.session.query to return our mock_query object when called
+        db.session.query = MagicMock(return_value=self.mock_query)
 
     def tearDown(self):
         """Tear down all initialized variables."""
