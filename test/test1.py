@@ -2,11 +2,10 @@
 import unittest
 from unittest.mock import MagicMock
 from flask import json
+from Flask.app import app, db
 
-from Flask.app import app, db 
-
-mock_job_listing = MagicMock()
-mock_job_listing.to_dict.return_value = {
+# Assuming this is the structure you want to test with
+mock_job_listing_dict = {
     'Listing_ID': 1,
     'Role': {
         'Role_ID': 1,
@@ -29,8 +28,11 @@ class FlaskTestCase(unittest.TestCase):
         self.app_context = self.app.app_context()
         self.app_context.push()
         
-        # Mock the database session
-        db.session = MagicMock()
+        # Mock the database session query
+        self.mock_job_listing = MagicMock()
+        self.mock_job_listing.to_dict.return_value = mock_job_listing_dict
+        db.session.query.return_value.all.return_value = [self.mock_job_listing]
+        db.session.query.return_value.get.return_value = self.mock_job_listing
 
     def tearDown(self):
         """Tear down all initialized variables."""
@@ -41,13 +43,14 @@ class FlaskTestCase(unittest.TestCase):
         response = self.client.get('/api/job_list')
         self.assertEqual(response.status_code, 200)
         data = json.loads(response.get_data(as_text=True))
-        self.assertEqual(data, mock_job_listing)
+        self.assertEqual(data, [mock_job_listing_dict])
 
     def test_get_job_listing_by_id(self):
         """Test API can get a single job listing by its ID."""
         response = self.client.get('/api/job_list/1')
         self.assertEqual(response.status_code, 200)
         data = json.loads(response.get_data(as_text=True))
-        self.assertEqual(data, mock_job_listing[0])
+        self.assertEqual(data, mock_job_listing_dict)
+
 if __name__ == '__main__':
     unittest.main()
