@@ -45,7 +45,7 @@ class FlaskTestCase(unittest.TestCase):
         db.session.remove()
         db.drop_all()  # Drop all data after each test
         self.query_patch.stop()  # Stop patching
-        self.app_context.pop() 
+        self.app_context.pop()  # Pop the application context
 
     def test_get_job_listings(self):
         """Test API can get job listings."""
