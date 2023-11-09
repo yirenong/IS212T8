@@ -5,20 +5,19 @@ from flask import json
 
 from Flask.app import app, db 
 
-mock_job_listings = [
-    {
-        'Listing_ID': 1,
-        'Role': {
-            'Role_ID': 1,
-            'Role_Name': 'Software Developer',
-            'Description': 'Develop applications.',
-            'Department': 'Engineering',
-            'Skills': ['Python', 'Flask']
-        },
-        'Opening': 3,
-        'Date_posted': '2023-01-01'
+mock_job_listing = MagicMock()
+mock_job_listing.to_dict.return_value = {
+    'Listing_ID': 1,
+    'Role': {
+        'Role_ID': 1,
+        'Role_Name': 'Software Developer',
+        'Description': 'Develop applications.',
+        'Department': 'Engineering',
+        'Skills': ['Python', 'Flask']
     },
-]
+    'Opening': 3,
+    'Date_posted': '2023-01-01'
+}
 
 class FlaskTestCase(unittest.TestCase):
 
