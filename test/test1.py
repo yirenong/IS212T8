@@ -1,6 +1,6 @@
 # test/unittest.py
 import unittest
-from unittest.mock import MagicMock
+from unittest.mock import patch, MagicMock
 from flask import json
 from Flask.app import app, db
 
@@ -22,27 +22,22 @@ class FlaskTestCase(unittest.TestCase):
 
     def setUp(self):
         """Set up test client and other test variables."""
-        self.app = app
-        self.client = self.app.test_client()
-        self.app.config['TESTING'] = True
-        self.app_context = self.app.app_context()
-        self.app_context.push()
-        
-        # Create a mock job listing
+        app.config['TESTING'] = True
+        app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///:memory:'  # Use in-memory SQLite database for testing
+        self.client = app.test_client()
         self.mock_job_listing = MagicMock()
         self.mock_job_listing.to_dict.return_value = mock_job_listing_dict
 
-        # Create a MagicMock for the query
+        # Patch db.session.query to use a MagicMock
         self.mock_query = MagicMock()
         self.mock_query.all.return_value = [self.mock_job_listing]
         self.mock_query.get.return_value = self.mock_job_listing
-        
-        # Patch db.session.query to return our mock_query object when called
-        db.session.query = MagicMock(return_value=self.mock_query)
+        self.query_patch = patch('Flask.app.db.session.query', return_value=self.mock_query)
+        self.query_patch.start()
 
     def tearDown(self):
         """Tear down all initialized variables."""
-        self.app_context.pop()
+        self.query_patch.stop()  # Stop patching db.session.query
 
     def test_get_job_listings(self):
         """Test API can get job listings."""
