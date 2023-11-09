@@ -24,20 +24,24 @@ class FlaskTestCase(unittest.TestCase):
         """Set up test client and other test variables."""
         app.config['TESTING'] = True
         app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///:memory:'  # Use in-memory SQLite database for testing
+        db.create_all()  # Create database schema in memory
         self.client = app.test_client()
+
         self.mock_job_listing = MagicMock()
         self.mock_job_listing.to_dict.return_value = mock_job_listing_dict
 
-        # Patch db.session.query to use a MagicMock
+        # Patch the query attribute of db.session to return our mock query object when called
         self.mock_query = MagicMock()
         self.mock_query.all.return_value = [self.mock_job_listing]
         self.mock_query.get.return_value = self.mock_job_listing
-        self.query_patch = patch('Flask.app.db.session.query', return_value=self.mock_query)
-        self.query_patch.start()
+        self.patcher = patch('Flask.app.db.session.query', MagicMock(return_value=self.mock_query))
+        self.patcher.start()
 
     def tearDown(self):
         """Tear down all initialized variables."""
-        self.query_patch.stop()  # Stop patching db.session.query
+        db.session.remove()
+        db.drop_all()  # Drop all data after each test
+        self.patcher.stop()  # Stop patching
 
     def test_get_job_listings(self):
         """Test API can get job listings."""
