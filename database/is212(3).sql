@@ -1,4 +1,3 @@
--- new 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 SET AUTOCOMMIT = 0;
 SET time_zone = "+00:00";
@@ -110,14 +109,6 @@ CREATE TABLE IF NOT EXISTS `Job_Listing` (
     `Date_posted` DATE NOT NULL,
     FOREIGN KEY (`Role_ID`) REFERENCES `Role`(`Role_ID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
-
---Insert Job_Listing
-INSERT INTO `Job_Listing` (`Listing_ID`, `Role_ID`, `Opening`, `Date_posted`)
-VALUES (1, 1, 3, '2023-09-28'),
-       (2, 2, 2, '2023-09-29'),
-       (3, 3, 1, '2023-09-30');
-
-
 -- Create Application Table
 DROP TABLE IF EXISTS `Application`;
 CREATE TABLE IF NOT EXISTS `Application` (
@@ -129,6 +120,13 @@ CREATE TABLE IF NOT EXISTS `Application` (
     FOREIGN KEY (`Listing_ID`) REFERENCES `Job_Listing`(`Listing_ID`),
     FOREIGN KEY (`Staff_ID`) REFERENCES `Staff`(`Staff_ID`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb3;
+
+-- Insert Job_Listing
+INSERT INTO `Job_Listing` (`Listing_ID`, `Role_ID`, `Opening`, `Date_posted`)
+VALUES (1, 1, 3, '2023-09-28'),
+       (2, 2, 2, '2023-09-29'),
+       (3, 3, 1, '2023-09-30');
+
 
 -- Insert Application
 INSERT INTO `Application` (`Staff_ID`, `Listing_ID`, `Date`, `Status`)
